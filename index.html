@@ -3,49 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>POLARIS - CRUD de Miembros</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>POLARIS - Comando Central</title>
+    <link href="./dist/output.css" rel="stylesheet">
 </head>
-<body class="bg-light">
-    <div class="container mt-5">
-        <h2 class="text-center mb-4 text-primary">Sistema POLARIS</h2>
+<body class="container">
+    <header>
+        <h1>SISTEMA POLARIS</h1>
+        <p>Módulo de Gestión de Tripulación</p>
+    </header>
 
-        <div class="row">
-            <div class="col-md-4">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h4 class="card-title mb-4">Nuevo Miembro</h4>
-                        <form id="formRegistro">
-                            <div class="mb-3">
-                                <label class="form-label">Nombre completo</label>
-                                <input type="text" id="nombre" class="form-control" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Correo electrónico</label>
-                                <input type="email" id="correo" class="form-control" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Rol en el equipo</label>
-                                <select id="rol" class="form-select" required>
-                                    <option value="">Selecciona un rol...</option>
-                                    <option value="Administrador">Administrador</option>
-                                    <option value="Desarrollador">Desarrollador</option>
-                                    <option value="Diseñador">Diseñador</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100">Registrar en POLARIS</button>
-                        </form>
-                    </div>
-                </div>
+    <section class="form-container">
+        <h2 style="color: white; margin-bottom: 1.5rem;">Registro de Personal</h2>
+        <form id="formRegistro">
+            <input type="hidden" id="miembroId">
+            <div class="form-group">
+                <label>Nombre Completo</label>
+                <input type="text" id="nombre" required>
             </div>
+            <div class="form-group">
+                <label>Correo Electronico</label>
+                <input type="email" id="correo" required>
+            </div>
+            <div class="form-group">
+                <label>Rango (Rol)</label>
+                <select id="rol" required>
+                    <option value="">Seleccionar rango...</option>
+                    <option value="Administrador">ADMINISTRADOR</option>
+                    <option value="Desarrollador">DESARROLLADOR</option>
+                    <option value="Diseñador">DISEÑADOR</option>
+                </select>
+            </div>
+            <button type="submit" id="btnSubmit" class="btn-main">Registrar en Polaris</button>
+        </form>
+    </section>
 
-            <div class="col-md-8">
-                <h4 class="mb-3">Miembros Registrados</h4>
-                <div id="listaMiembros" class="row g-3">
-                    </div>
+    <section class="members-section">
+        <h2 style="margin-bottom: 2rem; text-align: center;">Personal</h2>
+        <div id="listaMiembros" class="grid-members">
             </div>
-        </div>
-    </div>
+    </section>
 
     <script src="./src/app.js"></script>
 </body>
