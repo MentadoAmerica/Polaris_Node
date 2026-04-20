@@ -5,11 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>POLARIS - Comando Central</title>
     <link href="./dist/output.css" rel="stylesheet">
+    <!-- Flatpickr: Calendario visual -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        /* Estilo personalizado para Flatpickr en tema oscuro */
+        .flatpickr-calendar {
+            background: #1e293b;
+            color: white;
+            border: 1px solid #334155;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        .flatpickr-months .flatpickr-month, .flatpickr-months .flatpickr-prev-month, .flatpickr-months .flatpickr-next-month {
+            color: white;
+        }
+        .flatpickr-weekdays {
+            background: #0f172a;
+            color: #94a3b8;
+        }
+        .flatpickr-day {
+            color: #e2e8f0;
+        }
+        .flatpickr-day:hover, .flatpickr-day.nextMonthDay:hover, .flatpickr-day.prevMonthDay:hover, .flatpickr-day.nextMonthDay:hover, .flatpickr-day.prevMonthDay:hover {
+            background: #334155;
+            color: white;
+        }
+        .flatpickr-day.selected, .flatpickr-day.selected:hover {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+        }
+        .flatpickr-day.today {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+        .flatpickr-day.today:hover {
+            background: #ef4444;
+            color: white;
+        }
+    </style>
 </head>
 <body class="container">
     <header>
         <h1>SISTEMA POLARIS</h1>
-        <p>Módulo de Gestión de Tripulación</p>
+        <p>Módulo de Gestión de Tripulación y Eventos</p>
     </header>
 
     <section class="form-container">
@@ -21,7 +59,7 @@
                 <input type="text" id="nombre" required>
             </div>
             <div class="form-group">
-                <label>Correo Electronico</label>
+                <label>Correo Electrónico</label>
                 <input type="email" id="correo" required>
             </div>
             <div class="form-group">
@@ -38,11 +76,67 @@
     </section>
 
     <section class="members-section">
-        <h2 style="margin-bottom: 2rem; text-align: center;">Personal</h2>
-        <div id="listaMiembros" class="grid-members">
-            </div>
+        <h2 style="margin-bottom: 2rem; text-align: center;">Personal Registrado</h2>
+        <div id="listaMiembros" class="grid-members"></div>
     </section>
 
+    <hr>
+
+    <section class="form-container">
+        <h2 style="color: white; margin-bottom: 1.5rem;">Registro de Evento / Proyecto</h2>
+        <form id="formEvento">
+            <div class="form-group">
+                <label>Nombre del evento</label>
+                <input type="text" id="eventoNombre" required>
+            </div>
+            <div class="form-group">
+                <label>Tipo</label>
+                <select id="eventoTipo" required>
+                    <option value="">Seleccionar...</option>
+                    <option value="Proyecto">Proyecto</option>
+                    <option value="Evento">Evento</option>
+                    <option value="Competencia">Competencia</option>
+                    <option value="Actividad">Actividad</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Descripción breve</label>
+                <textarea id="eventoDescripcion" rows="2"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Fecha de inicio (calendario)</label>
+                <input type="date" id="eventoFechaInicio" required>
+            </div>
+            <div class="form-group">
+                <label>Fecha de cierre (tiempo activo)</label>
+                <input type="date" id="eventoFechaFin" required>
+            </div>
+            <div class="form-group">
+                <label>Estado</label>
+                <select id="eventoEstado" required>
+                    <option value="abierto">Abierto (activo)</option>
+                    <option value="cerrado">Cerrado (inactivo)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Participantes iniciales (selecciona desde la lista de miembros)</label>
+                <div id="participantesCheckboxes" class="event-checkbox-group">
+                    <p style="color:#aaa;">Cargando miembros...</p>
+                </div>
+            </div>
+            <button type="submit" id="btnRegistrarEvento" class="btn-main">Registrar Evento</button>
+        </form>
+    </section>
+
+    <section class="events-section">
+        <h2 style="margin-bottom: 2rem; text-align: center;">Eventos / Proyectos Registrados</h2>
+        <div id="listaEventos" class="grid-events">
+            <!-- Aquí se mostrarán las tarjetas de eventos -->
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
     <script src="./src/app.js"></script>
 </body>
 </html>
