@@ -1,15 +1,21 @@
 const API_MIEMBROS = 'http://localhost:3000/api/miembros';
 const API_EVENTOS = 'http://localhost:3000/api/eventos';
 
+// Elementos DOM miembros
 const formRegistro = document.getElementById('formRegistro');
 const listaMiembros = document.getElementById('listaMiembros');
 const btnSubmit = document.getElementById('btnSubmit');
 const inputId = document.getElementById('miembroId');
 
+// Elementos DOM eventos
 const formEvento = document.getElementById('formEvento');
 const listaEventos = document.getElementById('listaEventos');
 const participantesDiv = document.getElementById('participantesCheckboxes');
+const eventoIdHidden = document.getElementById('eventoId');
+const btnRegistrarEvento = document.getElementById('btnRegistrarEvento');
+const btnCancelarEdicionEvento = document.getElementById('btnCancelarEdicionEvento');
 
+// ---------- FUNCIONES PARA MIEMBROS (sin cambios) ----------
 async function cargarMiembros() {
     try {
         const respuesta = await fetch(API_MIEMBROS);
@@ -129,6 +135,7 @@ function resetearFormulario() {
     btnSubmit.style.color = '#000000';
 }
 
+// ---------- FUNCIONES PARA EVENTOS (CREATE, READ, UPDATE, DELETE) ----------
 async function cargarEventos() {
     try {
         const respuesta = await fetch(API_EVENTOS);
@@ -170,6 +177,10 @@ async function cargarEventos() {
                 <div class="participant-list">
                     👥 Participantes: ${participantesNombres || 'Ninguno'}
                 </div>
+                <div class="card-btns" style="margin-top: 1rem;">
+                    <button class="btn-edit" onclick="editarEvento(${evento.id})">Editar Evento</button>
+                    <button class="btn-delete" onclick="eliminarEvento(${evento.id})">Eliminar Evento</button>
+                </div>
             `;
             listaEventos.appendChild(card);
         });
@@ -178,9 +189,89 @@ async function cargarEventos() {
     }
 }
 
+// Función global para editar evento
+window.editarEvento = async (id) => {
+    try {
+        const respuesta = await fetch(`${API_EVENTOS}/${id}`);
+        if (!respuesta.ok) throw new Error('Evento no encontrado');
+        const evento = await respuesta.json();
+        
+        // Llenar el formulario con los datos del evento
+        eventoIdHidden.value = evento.id;
+        document.getElementById('eventoNombre').value = evento.nombre;
+        document.getElementById('eventoTipo').value = evento.tipo;
+        document.getElementById('eventoDescripcion').value = evento.descripcion;
+        document.getElementById('eventoFechaInicio').value = evento.fecha_inicio;
+        document.getElementById('eventoFechaFin').value = evento.fecha_fin;
+        document.getElementById('eventoEstado').value = evento.estado;
+        
+        // Marcar los checkboxes de participantes según los participantes actuales
+        const checkboxes = document.querySelectorAll('.participante-checkbox');
+        checkboxes.forEach(cb => {
+            cb.checked = evento.participantes.includes(parseInt(cb.value));
+        });
+        
+        // Cambiar el texto del botón y estilo
+        btnRegistrarEvento.innerText = 'Actualizar Evento';
+        btnRegistrarEvento.style.backgroundColor = '#000000';
+        btnRegistrarEvento.style.color = '#ffffff';
+        btnRegistrarEvento.style.border = '1px solid #ffffff';
+        
+        // Mostrar botón cancelar
+        btnCancelarEdicionEvento.style.display = 'block';
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (error) {
+        console.error("Error al cargar evento para editar:", error);
+        alert('No se pudo cargar el evento para editar');
+    }
+};
+
+// Función global para eliminar evento
+window.eliminarEvento = async (id) => {
+    if (confirm('¿Estás seguro de eliminar este evento/proyecto?')) {
+        try {
+            const respuesta = await fetch(`${API_EVENTOS}/${id}`, { method: 'DELETE' });
+            if (respuesta.ok) {
+                alert('Evento eliminado correctamente');
+                cargarEventos();  // Refrescar lista
+                // Si estaba editando el mismo evento, resetear formulario
+                if (eventoIdHidden.value == id) {
+                    resetearFormularioEvento();
+                }
+            } else {
+                alert('Error al eliminar el evento');
+            }
+        } catch (error) {
+            console.error("Error al eliminar evento:", error);
+            alert('Error de conexión');
+        }
+    }
+};
+
+// Función para resetear el formulario de eventos (cancelar edición)
+function resetearFormularioEvento() {
+    formEvento.reset();
+    eventoIdHidden.value = '';
+    btnRegistrarEvento.innerText = 'Registrar Evento';
+    btnRegistrarEvento.style.backgroundColor = '#ffffff';
+    btnRegistrarEvento.style.color = '#000000';
+    btnRegistrarEvento.style.border = '1px solid var(--accent-color)';
+    btnCancelarEdicionEvento.style.display = 'none';
+    // Desmarcar todos los checkboxes
+    document.querySelectorAll('.participante-checkbox').forEach(cb => cb.checked = false);
+}
+
+// Cancelar edición manual
+btnCancelarEdicionEvento.addEventListener('click', () => {
+    resetearFormularioEvento();
+});
+
+// Submit del formulario de eventos (Create o Update)
 formEvento.addEventListener('submit', async (e) => {
     e.preventDefault();
     
+    const id = eventoIdHidden.value;
     const nombre = document.getElementById('eventoNombre').value;
     const tipo = document.getElementById('eventoTipo').value;
     const descripcion = document.getElementById('eventoDescripcion').value;
@@ -207,27 +298,28 @@ formEvento.addEventListener('submit', async (e) => {
     };
     
     try {
-        const respuesta = await fetch(API_EVENTOS, {
-            method: 'POST',
+        const metodo = id ? 'PUT' : 'POST';
+        const url = id ? `${API_EVENTOS}/${id}` : API_EVENTOS;
+        
+        const respuesta = await fetch(url, {
+            method: metodo,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(eventoData)
         });
         
         if (respuesta.ok) {
-            alert('Evento / Proyecto registrado exitosamente');
-            formEvento.reset();
-            document.querySelectorAll('.participante-checkbox').forEach(cb => cb.checked = false);
-            cargarEventos();
+            alert(id ? 'Evento actualizado correctamente' : 'Evento registrado exitosamente');
+            resetearFormularioEvento();
+            cargarEventos();  // Refrescar la lista
         } else {
             const error = await respuesta.json();
             alert('Error: ' + error.mensaje);
         }
     } catch (error) {
-        console.error("Error al registrar evento:", error);
+        console.error("Error al guardar evento:", error);
         alert('Error de conexión con el servidor');
     }
 });
-
 
 flatpickr(document.getElementById('eventoFechaInicio'), {
     dateFormat: 'Y-m-d',
@@ -250,5 +342,6 @@ flatpickr(document.getElementById('eventoFechaFin'), {
     theme: 'dark'
 });
 
+// Cargar datos iniciales
 cargarMiembros();
 cargarEventos();

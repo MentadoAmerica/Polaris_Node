@@ -8,7 +8,6 @@
     <!-- Flatpickr: Calendario visual -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
-        /* Estilo personalizado para Flatpickr en tema oscuro */
         .flatpickr-calendar {
             background: #1e293b;
             color: white;
@@ -50,6 +49,7 @@
         <p>Módulo de Gestión de Tripulación y Eventos</p>
     </header>
 
+    <!-- SECCIÓN MIEMBROS (sin cambios) -->
     <section class="form-container">
         <h2 style="color: white; margin-bottom: 1.5rem;">Registro de Personal</h2>
         <form id="formRegistro">
@@ -82,9 +82,11 @@
 
     <hr>
 
+    <!-- SECCIÓN EVENTOS / PROYECTOS (con campo oculto para edición) -->
     <section class="form-container">
         <h2 style="color: white; margin-bottom: 1.5rem;">Registro de Evento / Proyecto</h2>
         <form id="formEvento">
+            <input type="hidden" id="eventoId">
             <div class="form-group">
                 <label>Nombre del evento</label>
                 <input type="text" id="eventoNombre" required>
@@ -125,13 +127,14 @@
                 </div>
             </div>
             <button type="submit" id="btnRegistrarEvento" class="btn-main">Registrar Evento</button>
+            <button type="button" id="btnCancelarEdicionEvento" class="btn-main" style="margin-top: 0.5rem; background: transparent; color: white;">Cancelar Edición</button>
         </form>
     </section>
 
     <section class="events-section">
         <h2 style="margin-bottom: 2rem; text-align: center;">Eventos / Proyectos Registrados</h2>
         <div id="listaEventos" class="grid-events">
-            <!-- Aquí se mostrarán las tarjetas de eventos -->
+            <!-- Aquí se mostrarán las tarjetas de eventos con botones Editar/Eliminar -->
         </div>
     </section>
 
