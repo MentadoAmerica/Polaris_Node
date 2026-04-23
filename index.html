@@ -4,139 +4,207 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>POLARIS - Comando Central</title>
-    <link href="./dist/output.css" rel="stylesheet">
-    <!-- Flatpickr: Calendario visual -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link href="./dist/output.css" rel="stylesheet">
     <style>
+        body {
+            background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), 
+                        url('https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-attachment: fixed;
+        }
         .flatpickr-calendar {
-            background: #1e293b;
-            color: white;
-            border: 1px solid #334155;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-        .flatpickr-months .flatpickr-month, .flatpickr-months .flatpickr-prev-month, .flatpickr-months .flatpickr-next-month {
-            color: white;
-        }
-        .flatpickr-weekdays {
-            background: #0f172a;
-            color: #94a3b8;
+            background: #1e293b !important;
+            border: 1px solid #334155 !important;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
         }
         .flatpickr-day {
-            color: #e2e8f0;
+            color: #e2e8f0 !important;
         }
-        .flatpickr-day:hover, .flatpickr-day.nextMonthDay:hover, .flatpickr-day.prevMonthDay:hover, .flatpickr-day.nextMonthDay:hover, .flatpickr-day.prevMonthDay:hover {
-            background: #334155;
-            color: white;
+        .flatpickr-day.selected {
+            background: #3b82f6 !important;
+            color: white !important;
         }
-        .flatpickr-day.selected, .flatpickr-day.selected:hover {
-            background: #3b82f6;
-            border-color: #3b82f6;
-            color: white;
+        .flatpickr-day:hover {
+            background: #334155 !important;
         }
-        .flatpickr-day.today {
-            border-color: #ef4444;
-            color: #ef4444;
+        .flatpickr-months .flatpickr-month, .flatpickr-current-month, .flatpickr-weekdays {
+            color: white !important;
         }
-        .flatpickr-day.today:hover {
-            background: #ef4444;
-            color: white;
+        .flatpickr-weekday {
+            color: #cbd5e1 !important;
+        }
+        .flatpickr-day.prevMonthDay, .flatpickr-day.nextMonthDay {
+            color: #64748b !important;
         }
     </style>
 </head>
-<body class="container">
-    <header>
-        <h1>SISTEMA POLARIS</h1>
-        <p>Módulo de Gestión de Tripulación y Eventos</p>
-    </header>
+<body class="text-white font-sans antialiased">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <header class="text-center mb-12">
+            <h1 class="text-5xl font-bold tracking-tight text-white mb-2">SISTEMA POLARIS</h1>
+            <p class="text-gray-400 text-lg">Módulo de Gestión de Tripulación y Eventos</p>
+        </header>
 
-    <!-- SECCIÓN MIEMBROS (sin cambios) -->
-    <section class="form-container">
-        <h2 style="color: white; margin-bottom: 1.5rem;">Registro de Personal</h2>
-        <form id="formRegistro">
-            <input type="hidden" id="miembroId">
-            <div class="form-group">
-                <label>Nombre Completo</label>
-                <input type="text" id="nombre" required>
-            </div>
-            <div class="form-group">
-                <label>Correo Electrónico</label>
-                <input type="email" id="correo" required>
-            </div>
-            <div class="form-group">
-                <label>Rango (Rol)</label>
-                <select id="rol" required>
-                    <option value="">Seleccionar rango...</option>
-                    <option value="Administrador">ADMINISTRADOR</option>
-                    <option value="Desarrollador">DESARROLLADOR</option>
-                    <option value="Diseñador">DISEÑADOR</option>
-                </select>
-            </div>
-            <button type="submit" id="btnSubmit" class="btn-main">Registrar en Polaris</button>
-        </form>
-    </section>
+        <div class="bg-black/70 backdrop-blur-md border border-white/10 rounded-xl p-8 mb-12 max-w-4xl mx-auto shadow-2xl">
+            <h2 class="text-2xl font-bold text-white border-l-4 border-white pl-4 mb-6">Registro de Personal</h2>
+            <form id="formRegistro" class="space-y-5">
+                <input type="hidden" id="miembroId">
 
-    <section class="members-section">
-        <h2 style="margin-bottom: 2rem; text-align: center;">Personal Registrado</h2>
-        <div id="listaMiembros" class="grid-members"></div>
-    </section>
-
-    <hr>
-
-    <!-- SECCIÓN EVENTOS / PROYECTOS (con campo oculto para edición) -->
-    <section class="form-container">
-        <h2 style="color: white; margin-bottom: 1.5rem;">Registro de Evento / Proyecto</h2>
-        <form id="formEvento">
-            <input type="hidden" id="eventoId">
-            <div class="form-group">
-                <label>Nombre del evento</label>
-                <input type="text" id="eventoNombre" required>
-            </div>
-            <div class="form-group">
-                <label>Tipo</label>
-                <select id="eventoTipo" required>
-                    <option value="">Seleccionar...</option>
-                    <option value="Proyecto">Proyecto</option>
-                    <option value="Evento">Evento</option>
-                    <option value="Competencia">Competencia</option>
-                    <option value="Actividad">Actividad</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Descripción breve</label>
-                <textarea id="eventoDescripcion" rows="2"></textarea>
-            </div>
-            <div class="form-group">
-                <label>Fecha de inicio (calendario)</label>
-                <input type="date" id="eventoFechaInicio" required>
-            </div>
-            <div class="form-group">
-                <label>Fecha de cierre (tiempo activo)</label>
-                <input type="date" id="eventoFechaFin" required>
-            </div>
-            <div class="form-group">
-                <label>Estado</label>
-                <select id="eventoEstado" required>
-                    <option value="abierto">Abierto (activo)</option>
-                    <option value="cerrado">Cerrado (inactivo)</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Participantes iniciales (selecciona desde la lista de miembros)</label>
-                <div id="participantesCheckboxes" class="event-checkbox-group">
-                    <p style="color:#aaa;">Cargando miembros...</p>
+                <div class="border-b border-white/20 pb-4 mb-2">
+                    <h3 class="text-lg font-semibold text-white mb-3">Datos Personales</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-gray-300 text-sm font-medium mb-1">Nombre(s)</label>
+                            <input type="text" id="nombre" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
+                        </div>
+                        <div>
+                            <label class="block text-gray-300 text-sm font-medium mb-1">Apellido Paterno</label>
+                            <input type="text" id="apellidoPaterno" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
+                        </div>
+                        <div>
+                            <label class="block text-gray-300 text-sm font-medium mb-1">Apellido Materno</label>
+                            <input type="text" id="apellidoMaterno" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
+                        </div>
+                        <div>
+                            <label class="block text-gray-300 text-sm font-medium mb-1">Correo Electrónico (Personal)</label>
+                            <input type="email" id="correo" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
+                        </div>
+                        <div>
+                            <label class="block text-gray-300 text-sm font-medium mb-1">Teléfono Móvil (10 dígitos)</label>
+                            <input type="tel" id="telefono" pattern="\d{10}" maxlength="10" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
+                        </div>
+                        <div>
+                            <label class="block text-gray-300 text-sm font-medium mb-1">Fecha de Nacimiento</label>
+                            <input type="text" id="fechaNacimiento" placeholder="dd/mm/aaaa" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
+                        </div>
+                        <div>
+                            <label class="block text-gray-300 text-sm font-medium mb-1">Género</label>
+                            <select id="genero" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
+                                <option value="">Seleccionar</option>
+                                <option value="Masculino">Masculino</option>
+                                <option value="Femenino">Femenino</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <button type="submit" id="btnRegistrarEvento" class="btn-main">Registrar Evento</button>
-            <button type="button" id="btnCancelarEdicionEvento" class="btn-main" style="margin-top: 0.5rem; background: transparent; color: white;">Cancelar Edición</button>
-        </form>
-    </section>
 
-    <section class="events-section">
-        <h2 style="margin-bottom: 2rem; text-align: center;">Eventos / Proyectos Registrados</h2>
-        <div id="listaEventos" class="grid-events">
-            <!-- Aquí se mostrarán las tarjetas de eventos con botones Editar/Eliminar -->
+                <div class="pb-2">
+                    <h3 class="text-lg font-semibold text-white mb-3">Datos Académicos</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-gray-300 text-sm font-medium mb-1">Institución Educativa</label>
+                            <input type="text" id="institucion" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
+                        </div>
+                        <div>
+                            <label class="block text-gray-300 text-sm font-medium mb-1">Número de Control (8 o 9 dígitos)</label>
+                            <input type="text" id="numeroControl" pattern="\d{8,9}" maxlength="9" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
+                        </div>
+                        <div>
+                            <label class="block text-gray-300 text-sm font-medium mb-1">Carrera</label>
+                            <select id="carrera" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
+                                <option value="">Seleccionar carrera...</option>
+                                <option value="Ingeniería en Sistemas Computacionales">Ingeniería en Sistemas Computacionales</option>
+                                <option value="Ingeniería Civil">Ingeniería Civil</option>
+                                <option value="Ingeniería Mecatrónica">Ingeniería Mecatrónica</option>
+                                <option value="Ingeniería Ambiental">Ingeniería Ambiental</option>
+                                <option value="Contabilidad">Contabilidad</option>
+                                <option value="Administración">Administración</option>
+                                <option value="Ingeniería Industrial">Ingeniería Industrial</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-300 text-sm font-medium mb-1">Semestre</label>
+                            <select id="semestre" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
+                                <option value="">Seleccionar semestre</option>
+                                <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+                                <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+                                <option value="7">7</option><option value="8">8</option><option value="9">9</option>
+                                <option value="Egresado">Egresado</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-300 text-sm font-medium mb-1">Año de Ingreso</label>
+                            <input type="number" id="anioIngreso" min="2000" max="2030" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
+                        </div>
+                        <div>
+                            <label class="block text-gray-300 text-sm font-medium mb-1">Rol en el equipo</label>
+                            <select id="rol" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
+                                <option value="">Seleccionar rango...</option>
+                                <option value="Administrador">ADMINISTRADOR</option>
+                                <option value="Desarrollador">DESARROLLADOR</option>
+                                <option value="Diseñador">DISEÑADOR</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" id="btnSubmit" class="w-full bg-white text-black font-bold py-2 rounded-md border border-white hover:bg-transparent hover:text-white transition-all duration-300 tracking-wide">Registrar en Polaris</button>
+            </form>
         </div>
-    </section>
+
+        <div class="mb-16">
+            <h2 class="text-2xl font-bold text-center mb-6">Personal Registrado</h2>
+            <div id="listaMiembros" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </div>
+
+        <hr class="border-white/20 my-8">
+
+        <div class="bg-black/70 backdrop-blur-md border border-white/10 rounded-xl p-8 mb-12 max-w-2xl mx-auto shadow-2xl">
+            <h2 class="text-2xl font-bold text-white border-l-4 border-white pl-4 mb-6">Registro de Evento / Proyecto</h2>
+            <form id="formEvento" class="space-y-5">
+                <input type="hidden" id="eventoId">
+                <div>
+                    <label class="block text-gray-300 text-sm font-medium mb-1">Nombre del evento</label>
+                    <input type="text" id="eventoNombre" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
+                </div>
+                <div>
+                    <label class="block text-gray-300 text-sm font-medium mb-1">Tipo</label>
+                    <select id="eventoTipo" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
+                        <option value="">Seleccionar...</option>
+                        <option value="Proyecto">Proyecto</option>
+                        <option value="Evento">Evento</option>
+                        <option value="Competencia">Competencia</option>
+                        <option value="Actividad">Actividad</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-gray-300 text-sm font-medium mb-1">Descripción breve</label>
+                    <textarea id="eventoDescripcion" rows="2" class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2"></textarea>
+                </div>
+                <div>
+                    <label class="block text-gray-300 text-sm font-medium mb-1">Fecha de inicio</label>
+                    <input type="date" id="eventoFechaInicio" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
+                </div>
+                <div>
+                    <label class="block text-gray-300 text-sm font-medium mb-1">Fecha de cierre</label>
+                    <input type="date" id="eventoFechaFin" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
+                </div>
+                <div>
+                    <label class="block text-gray-300 text-sm font-medium mb-1">Estado</label>
+                    <select id="eventoEstado" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
+                        <option value="abierto">Abierto (activo)</option>
+                        <option value="cerrado">Cerrado (inactivo)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-gray-300 text-sm font-medium mb-1">Participantes iniciales</label>
+                    <div id="participantesCheckboxes" class="bg-black/40 p-3 rounded-md max-h-40 overflow-y-auto space-y-2">
+                        <p class="text-gray-400 text-sm">Cargando miembros...</p>
+                    </div>
+                </div>
+                <button type="submit" id="btnRegistrarEvento" class="w-full bg-white text-black font-bold py-2 rounded-md border border-white hover:bg-transparent hover:text-white transition-all">Registrar Evento</button>
+                <button type="button" id="btnCancelarEdicionEvento" class="w-full bg-transparent border border-white text-white py-2 rounded-md hover:bg-white hover:text-black transition-all hidden">Cancelar Edición</button>
+            </form>
+        </div>
+
+        <div>
+            <h2 class="text-2xl font-bold text-center mb-6">Eventos / Proyectos Registrados</h2>
+            <div id="listaEventos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
