@@ -19,7 +19,8 @@ flatpickr("#fechaNacimiento", {
     altInput: true,
     altFormat: "d/m/Y",
     allowInput: true,
-    maxDate: new Date()
+    maxDate: new Date(),
+    theme: "dark"
 });
 
 async function cargarMiembros() {
@@ -62,28 +63,55 @@ async function cargarMiembros() {
 }
 
 async function cargarParticipantesCheckboxes() {
-    try {
-        const respuesta = await fetch(API_MIEMBROS);
-        const miembros = await respuesta.json();
-        if (miembros.length === 0) {
-            participantesDiv.innerHTML = '<p class="text-gray-400 text-sm">No hay miembros registrados aún.</p>';
-            return;
-        }
-        let html = '';
-        miembros.forEach(m => {
-            const nombreCompleto = `${m.nombre || ''} ${m.apellido_paterno || ''} ${m.apellido_materno || ''}`.trim();
-            html += `
-                <label class="flex items-center gap-2 text-sm cursor-pointer">
-                    <input type="checkbox" value="${m.id}" class="participante-checkbox w-4 h-4">
-                    <span>${nombreCompleto} (${m.rol || ''})</span>
-                </label>
-            `;
-        });
-        participantesDiv.innerHTML = html;
-    } catch (error) {
-        console.error("Error al cargar miembros para participantes:", error);
-        participantesDiv.innerHTML = '<p class="text-red-400 text-sm">Error cargando miembros</p>';
+  try {
+    const respuesta = await fetch(API_MIEMBROS);
+    const miembros = await respuesta.json();
+
+    if (miembros.length === 0) {
+      participantesDiv.innerHTML = `
+        <p class="text-gray-400 text-sm text-center py-6">📭 No hay miembros registrados aún.</p>
+      `;
+      return;
     }
+
+    let html = '<div class="space-y-2">';
+
+    miembros.forEach(m => {
+      const nombreCompleto = `${m.nombre || ''} ${m.apellido_paterno || ''} ${m.apellido_materno || ''}`.trim();
+      const rolColor = {
+        'ADMINISTRADOR': 'bg-purple-500/20 text-purple-300 border-purple-400/30',
+        'DESARROLLADOR': 'bg-blue-500/20 text-blue-300 border-blue-400/30',
+        'DISEÑADOR': 'bg-pink-500/20 text-pink-300 border-pink-400/30'
+      }[m.rol] || 'bg-gray-500/20 text-gray-300 border-gray-400/30';
+
+      html += `
+        <label class="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-3 cursor-pointer hover:bg-white/10 hover:border-blue-400/30 transition-all group">
+          <input type="checkbox" class="participante-checkbox accent-blue-500 w-5 h-5 cursor-pointer" value="${m.id}">
+          <div class="flex-1 min-w-0">
+            <p class="text-white text-sm font-semibold group-hover:text-blue-300 transition truncate">${nombreCompleto}</p>
+            <div class="flex gap-2 mt-1">
+              <span class="text-xs px-2 py-0.5 bg-gray-500/20 text-gray-300 rounded-full border border-gray-400/20">
+                ${m.numero_control || 'S/N'}
+              </span>
+              <span class="text-xs px-2 py-0.5 rounded-full border ${rolColor}">
+                ${m.rol || 'Sin rol'}
+              </span>
+            </div>
+          </div>
+          <span class="text-lg group-hover:scale-110 transition">✓</span>
+        </label>
+      `;
+    });
+
+    html += '</div>';
+    participantesDiv.innerHTML = html;
+
+  } catch (error) {
+    console.error("Error al cargar miembros para participantes:", error);
+    participantesDiv.innerHTML = `
+      <p class="text-red-400 text-sm text-center py-4">❌ Error cargando miembros</p>
+    `;
+  }
 }
 
 formRegistro.addEventListener('submit', async (e) => {
@@ -100,7 +128,6 @@ formRegistro.addEventListener('submit', async (e) => {
         return;
     }
     
-    // Convertir a mayúsculas todos los campos de texto (excepto correo)
     const datosMiembro = {
         nombre: document.getElementById('nombre').value.toUpperCase(),
         apellido_paterno: document.getElementById('apellidoPaterno').value.toUpperCase(),
@@ -202,30 +229,83 @@ async function cargarEventos() {
         eventos.forEach(evento => {
             const fechaInicio = new Date(evento.fecha_inicio).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
             const fechaFin = new Date(evento.fecha_fin).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
-            const participantesNombres = evento.participantes.map(id => {
+            
+            const participantesHTML = evento.participantes.map(id => {
                 const miembro = miembros.find(m => m.id === id);
                 if (miembro) {
                     const nombreCompleto = `${miembro.nombre || ''} ${miembro.apellido_paterno || ''} ${miembro.apellido_materno || ''}`.trim();
-                    return `${nombreCompleto} (${miembro.rol || ''})`;
+                    return `
+                        <span class="bg-blue-500/20 text-blue-200 border border-blue-400/30 px-3 py-1 rounded-full text-xs font-semibold hover:bg-blue-500/30 transition">
+                            ${nombreCompleto}
+                        </span>
+                    `;
                 }
-                return `ID ${id}`;
-            }).join(', ');
-            const card = document.createElement('div');
-            card.className = 'bg-white/5 border border-white/10 rounded-lg p-5';
-            card.innerHTML = `
-                <h3 class="text-xl font-bold mb-2">${evento.nombre.toUpperCase()}</h3>
-                <div class="mb-3">
-                    <span class="event-badge">${evento.tipo.toUpperCase()}</span>
-                    <span class="event-badge ${evento.estado === 'abierto' ? 'event-status-abierto' : 'event-status-cerrado'}">
-                        ${evento.estado === 'abierto' ? '✅ ABIERTO' : '🔒 CERRADO'}
+                return `
+                    <span class="bg-gray-500/20 text-gray-300 border border-gray-400/20 px-3 py-1 rounded-full text-xs">
+                        ID ${id}
                     </span>
+                `;
+            }).join('');
+
+            const tipoIcono = {
+                'Proyecto': '◆',
+                'Evento': '✦',
+                'Competencia': '⬢',
+                'Actividad': '●'
+            }[evento.tipo] || '◈';
+
+            const estadoBadge = evento.estado === 'abierto' 
+                ? '<span class="inline-flex items-center gap-1 bg-green-500/20 text-green-300 border border-green-400/30 px-3 py-1 rounded-full text-xs font-semibold"><span class="w-2 h-2 bg-green-400 rounded-full"></span>ABIERTO</span>'
+                : '<span class="inline-flex items-center gap-1 bg-red-500/20 text-red-300 border border-red-400/30 px-3 py-1 rounded-full text-xs font-semibold"><span class="w-2 h-2 bg-red-400 rounded-full"></span>CERRADO</span>';
+
+            const card = document.createElement('div');
+            card.className = 'bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10 rounded-2xl p-6 shadow-lg hover:shadow-2xl hover:border-white/20 transition-all duration-300 group';
+
+            card.innerHTML = `
+                <div class="flex justify-between items-start gap-3 mb-4">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-2xl">${tipoIcono}</span>
+                            <h3 class="text-xl font-bold text-white group-hover:text-blue-300 transition">${evento.nombre.toUpperCase()}</h3>
+                        </div>
+                        <p class="text-sm text-gray-400">${evento.tipo}</p>
+                    </div>
+                    <div>
+                        ${estadoBadge}
+                    </div>
                 </div>
-                <p class="text-sm text-gray-300 mb-2">📅 ${fechaInicio} → ${fechaFin}</p>
-                <p class="mb-3">${evento.descripcion || 'Sin descripción'}</p>
-                <div class="participant-list">👥 Participantes: ${participantesNombres || 'Ninguno'}</div>
-                <div class="flex gap-3 mt-4">
-                    <button class="btn-edit flex-1 bg-white text-black py-2 rounded text-xs font-semibold hover:opacity-80" onclick="editarEvento(${evento.id})">Editar Evento</button>
-                    <button class="btn-delete flex-1 bg-transparent border border-white text-white py-2 rounded text-xs font-semibold hover:bg-red-600 hover:border-red-600" onclick="eliminarEvento(${evento.id})">Eliminar Evento</button>
+
+                <div class="border-b border-white/10 pb-4 mb-4">
+                    <p class="text-sm text-gray-300 leading-relaxed">
+                        ${evento.descripcion || '<span class="text-gray-500 italic">Sin descripción</span>'}
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 mb-4 text-sm">
+                    <div class="bg-white/5 rounded-lg p-3 border border-white/5">
+                        <p class="text-gray-400 text-xs mb-1">📅 Inicio</p>
+                        <p class="text-white font-semibold">${fechaInicio}</p>
+                    </div>
+                    <div class="bg-white/5 rounded-lg p-3 border border-white/5">
+                        <p class="text-gray-400 text-xs mb-1">📅 Cierre</p>
+                        <p class="text-white font-semibold">${fechaFin}</p>
+                    </div>
+                </div>
+
+                <div class="mb-5">
+                    <p class="text-sm font-semibold text-white mb-3">👥 Participantes (${evento.participantes.length})</p>
+                    <div class="flex flex-wrap gap-2">
+                        ${participantesHTML || '<span class="text-gray-400 text-sm italic">Sin participantes asignados</span>'}
+                    </div>
+                </div>
+
+                <div class="flex gap-2 pt-4 border-t border-white/10">
+                    <button onclick="editarEvento(${evento.id})" class="flex-1 bg-white/10 hover:bg-blue-500/20 text-white font-semibold px-3 py-2 rounded-lg transition border border-white/10 hover:border-blue-400/50 text-sm">
+                        ✏️ Editar
+                    </button>
+                    <button onclick="eliminarEvento(${evento.id})" class="flex-1 bg-white/10 hover:bg-red-500/20 text-white font-semibold px-3 py-2 rounded-lg transition border border-white/10 hover:border-red-400/50 text-sm">
+                        🗑️ Eliminar
+                    </button>
                 </div>
             `;
             listaEventos.appendChild(card);
@@ -247,10 +327,14 @@ window.editarEvento = async (id) => {
         document.getElementById('eventoFechaInicio').value = evento.fecha_inicio;
         document.getElementById('eventoFechaFin').value = evento.fecha_fin;
         document.getElementById('eventoEstado').value = evento.estado;
+        actualizarEstadoVisual();
         const checkboxes = document.querySelectorAll('.participante-checkbox');
         checkboxes.forEach(cb => {
             cb.checked = evento.participantes.includes(parseInt(cb.value));
         });
+        
+        // Mostrar indicador de edición
+        document.getElementById('modoEdicion').classList.remove('hidden');
         btnRegistrarEvento.innerText = 'Actualizar Evento';
         btnRegistrarEvento.classList.add('bg-black', 'text-white', 'border-white');
         btnRegistrarEvento.classList.remove('bg-white', 'text-black');
@@ -263,21 +347,22 @@ window.editarEvento = async (id) => {
 };
 
 window.eliminarEvento = async (id) => {
-    if (confirm('¿Estás seguro de eliminar este evento/proyecto?')) {
+    const confirmDialog = confirm('⚠️ ¿Estás seguro de eliminar este evento/proyecto?\n\nEsta acción no se puede deshacer.');
+    if (confirmDialog) {
         try {
             const respuesta = await fetch(`${API_EVENTOS}/${id}`, { method: 'DELETE' });
             if (respuesta.ok) {
-                alert('Evento eliminado correctamente');
+                alert('✅ Evento eliminado correctamente');
                 cargarEventos();
                 if (eventoIdHidden.value == id) {
                     resetearFormularioEvento();
                 }
             } else {
-                alert('Error al eliminar el evento');
+                alert('❌ Error al eliminar el evento');
             }
         } catch (error) {
             console.error("Error al eliminar evento:", error);
-            alert('Error de conexión');
+            alert('❌ Error de conexión');
         }
     }
 };
@@ -285,15 +370,47 @@ window.eliminarEvento = async (id) => {
 function resetearFormularioEvento() {
     formEvento.reset();
     eventoIdHidden.value = '';
+    document.getElementById('modoEdicion').classList.add('hidden');
     btnRegistrarEvento.innerText = 'Registrar Evento';
     btnRegistrarEvento.classList.add('bg-white', 'text-black');
     btnRegistrarEvento.classList.remove('bg-black', 'text-white', 'border-white');
     btnCancelarEdicionEvento.classList.add('hidden');
     document.querySelectorAll('.participante-checkbox').forEach(cb => cb.checked = false);
+    actualizarEstadoVisual();
 }
 
 btnCancelarEdicionEvento.addEventListener('click', () => {
     resetearFormularioEvento();
+});
+
+// Actualizar clase de estado visual
+function actualizarEstadoVisual() {
+    const estadoSelect = document.getElementById('eventoEstado');
+    if (!estadoSelect) return;
+    
+    const valor = estadoSelect.value;
+    estadoSelect.classList.remove('estado-abierto', 'estado-cerrado');
+    
+    if (valor === 'abierto') {
+        estadoSelect.classList.add('estado-abierto');
+        estadoSelect.style.backgroundColor = 'rgba(59, 130, 246, 0.2)';
+        estadoSelect.style.borderColor = '#3b82f6';
+        estadoSelect.style.color = '#93c5fd';
+    } else if (valor === 'cerrado') {
+        estadoSelect.classList.add('estado-cerrado');
+        estadoSelect.style.backgroundColor = 'rgba(229, 231, 235, 0.2)';
+        estadoSelect.style.borderColor = '#e5e7eb';
+        estadoSelect.style.color = '#f3f4f6';
+    }
+}
+
+// Listener para cambios en el select de estado
+document.addEventListener('DOMContentLoaded', function() {
+    const estadoSelect = document.getElementById('eventoEstado');
+    if (estadoSelect) {
+        estadoSelect.addEventListener('change', actualizarEstadoVisual);
+        actualizarEstadoVisual();
+    }
 });
 
 formEvento.addEventListener('submit', async (e) => {
@@ -342,7 +459,16 @@ flatpickr(document.getElementById('eventoFechaInicio'), {
     altInput: true,
     altFormat: 'd/m/Y',
     allowInput: true,
-    theme: 'dark'
+    theme: 'dark',
+    closeOnSelect: true,
+    onChange: function(selectedDates) {
+        if (selectedDates.length > 0) {
+            const fechaFin = document.getElementById('eventoFechaFin');
+            if (fechaFin && fechaFin._flatpickr) {
+                fechaFin._flatpickr.set('minDate', selectedDates[0]);
+            }
+        }
+    }
 });
 
 flatpickr(document.getElementById('eventoFechaFin'), {
@@ -351,9 +477,12 @@ flatpickr(document.getElementById('eventoFechaFin'), {
     minDate: new Date(),
     enableTime: false,
     altInput: true,
+    altFormat: 'd/m/Y',
     allowInput: true,
-    theme: 'dark'
+    theme: 'dark',
+    closeOnSelect: true
 });
 
 cargarMiembros();
 cargarEventos();
+actualizarEstadoVisual();

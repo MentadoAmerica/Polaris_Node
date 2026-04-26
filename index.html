@@ -14,29 +14,143 @@
             background-size: cover;
             background-attachment: fixed;
         }
+
+        /* Estilos para Flatpickr - Calendario */
         .flatpickr-calendar {
-            background: #1e293b !important;
-            border: 1px solid #334155 !important;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
+            background: #1a1a2e !important;
+            border: 1px solid #3b82f6 !important;
+            border-radius: 8px !important;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8) !important;
+            width: auto !important;
         }
+
+        .flatpickr-calendar.open {
+            display: inline-block !important;
+            z-index: 9999 !important;
+        }
+
+        .flatpickr-months {
+            background: rgba(59, 130, 246, 0.1) !important;
+        }
+
+        .flatpickr-month {
+            color: #fff !important;
+        }
+
+        .flatpickr-current-month {
+            color: #3b82f6 !important;
+            font-weight: 600;
+        }
+
+        .flatpickr-current-month input {
+            color: white !important;
+            background: rgba(59, 130, 246, 0.2) !important;
+            border: 1px solid #3b82f6 !important;
+        }
+
+        .flatpickr-prev-month,
+        .flatpickr-next-month {
+            color: #93c5fd !important;
+        }
+
+        .flatpickr-prev-month:hover,
+        .flatpickr-next-month:hover {
+            color: #3b82f6 !important;
+        }
+
+        .flatpickr-weekdays {
+            background: rgba(59, 130, 246, 0.15) !important;
+        }
+
+        .flatpickr-weekday {
+            color: #93c5fd !important;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
         .flatpickr-day {
-            color: #e2e8f0 !important;
+            color: #d1d5db !important;
+            border: none !important;
         }
-        .flatpickr-day.selected {
+
+        .flatpickr-day:hover:not(.disabled) {
             background: #3b82f6 !important;
             color: white !important;
         }
-        .flatpickr-day:hover {
-            background: #334155 !important;
+
+        .flatpickr-day.selected {
+            background: #2563eb !important;
+            color: white !important;
+            font-weight: bold;
         }
-        .flatpickr-months .flatpickr-month, .flatpickr-current-month, .flatpickr-weekdays {
+
+        .flatpickr-day.today {
+            border-bottom: 2px solid #3b82f6 !important;
+            color: #3b82f6 !important;
+        }
+
+        .flatpickr-day.prevMonthDay,
+        .flatpickr-day.nextMonthDay {
+            color: #4b5563 !important;
+        }
+
+        .flatpickr-day.disabled {
+            color: #374151 !important;
+            cursor: not-allowed;
+        }
+
+        .numInputWrapper {
             color: white !important;
         }
-        .flatpickr-weekday {
-            color: #cbd5e1 !important;
+
+        .numInputWrapper input {
+            color: white !important;
+            background: rgba(59, 130, 246, 0.1) !important;
+            border: 1px solid #3b82f6 !important;
         }
-        .flatpickr-day.prevMonthDay, .flatpickr-day.nextMonthDay {
-            color: #64748b !important;
+
+        /* Inputs de fecha */
+        #fechaNacimiento,
+        #eventoFechaInicio,
+        #eventoFechaFin {
+            cursor: pointer;
+        }
+
+        #fechaNacimiento:focus,
+        #eventoFechaInicio:focus,
+        #eventoFechaFin:focus {
+            border-color: #3b82f6 !important;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1) !important;
+        }
+
+        /* Estilo para select de tipo con iconos */
+        #eventoTipo {
+            background-image: url('data:image/svg+xml;utf8,<svg fill="white" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            background-size: 24px;
+            padding-right: 40px;
+            appearance: none;
+        }
+
+        /* Estilos para Estado - Abierto (verde) */
+        #eventoEstado.estado-abierto {
+            background-color: rgba(16, 185, 129, 0.2) !important;
+            border-color: #10b981 !important;
+            color: #a7f3d0 !important;
+        }
+
+        /* Estilos para Estado - Cerrado (rojo) */
+        #eventoEstado.estado-cerrado {
+            background-color: rgba(239, 68, 68, 0.2) !important;
+            border-color: #ef4444 !important;
+            color: #fca5a5 !important;
+        }
+
+        #eventoTipo option {
+            background: #1a1a2e;
+            color: white;
+            padding: 8px;
         }
     </style>
 </head>
@@ -49,7 +163,7 @@
 
         <div class="bg-black/70 backdrop-blur-md border border-white/10 rounded-xl p-8 mb-12 max-w-4xl mx-auto shadow-2xl">
             <h2 class="text-2xl font-bold text-white border-l-4 border-white pl-4 mb-6">Registro de Personal</h2>
-            <form id="formRegistro" class="space-y-5">
+            <form id="formRegistro" class="space-y-5" autocomplete="off">
                 <input type="hidden" id="miembroId">
 
                 <div class="border-b border-white/20 pb-4 mb-2">
@@ -153,55 +267,99 @@
         <hr class="border-white/20 my-8">
 
         <div class="bg-black/70 backdrop-blur-md border border-white/10 rounded-xl p-8 mb-12 max-w-2xl mx-auto shadow-2xl">
-            <h2 class="text-2xl font-bold text-white border-l-4 border-white pl-4 mb-6">Registro de Evento / Proyecto</h2>
-            <form id="formEvento" class="space-y-5">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-white flex-1 text-center">Registro de Evento / Proyecto</h2>
+                <div id="modoEdicion" class="hidden bg-amber-500/20 border border-amber-400/30 px-3 py-1 rounded-full text-xs font-semibold text-amber-300">EDITANDO</div>
+            </div>
+            <form id="formEvento" class="space-y-6" autocomplete="off">
                 <input type="hidden" id="eventoId">
-                <div>
-                    <label class="block text-gray-300 text-sm font-medium mb-1">Nombre del evento</label>
-                    <input type="text" id="eventoNombre" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
-                </div>
-                <div>
-                    <label class="block text-gray-300 text-sm font-medium mb-1">Tipo</label>
-                    <select id="eventoTipo" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
-                        <option value="">Seleccionar...</option>
-                        <option value="Proyecto">Proyecto</option>
-                        <option value="Evento">Evento</option>
-                        <option value="Competencia">Competencia</option>
-                        <option value="Actividad">Actividad</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-gray-300 text-sm font-medium mb-1">Descripción breve</label>
-                    <textarea id="eventoDescripcion" rows="2" class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2"></textarea>
-                </div>
-                <div>
-                    <label class="block text-gray-300 text-sm font-medium mb-1">Fecha de inicio</label>
-                    <input type="date" id="eventoFechaInicio" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
-                </div>
-                <div>
-                    <label class="block text-gray-300 text-sm font-medium mb-1">Fecha de cierre</label>
-                    <input type="date" id="eventoFechaFin" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
-                </div>
-                <div>
-                    <label class="block text-gray-300 text-sm font-medium mb-1">Estado</label>
-                    <select id="eventoEstado" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
-                        <option value="abierto">Abierto (activo)</option>
-                        <option value="cerrado">Cerrado (inactivo)</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-gray-300 text-sm font-medium mb-1">Participantes iniciales</label>
-                    <div id="participantesCheckboxes" class="bg-black/40 p-3 rounded-md max-h-40 overflow-y-auto space-y-2">
-                        <p class="text-gray-400 text-sm">Cargando miembros...</p>
+                
+                <!-- Información General -->
+                <div class="border-b border-white/20 pb-4">
+                    <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <span class="w-6 h-6 bg-blue-500/30 rounded-full flex items-center justify-center text-xs">1</span>
+                        Información General
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="md:col-span-2">
+                            <label class="block text-gray-300 text-sm font-medium mb-2">Nombre del evento/proyecto:</label>
+                            <input type="text" id="eventoNombre" required class="w-full bg-black border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:border-blue-500 focus:outline-none transition placeholder-gray-500" placeholder="Ej: Competencia de Robótica 2024">
+                        </div>
+                        <div>
+                            <label class="block text-gray-300 text-sm font-medium mb-2">Tipo:</label>
+                            <select id="eventoTipo" required class="w-full bg-black border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:border-blue-500 focus:outline-none transition">
+                                <option value="">Seleccionar tipo...</option>
+                                <option value="Proyecto">◆ Proyecto</option>
+                                <option value="Evento">✦ Evento</option>
+                                <option value="Competencia">⬢ Competencia</option>
+                                <option value="Actividad">● Actividad</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-300 text-sm font-medium mb-2">Estado:</label>
+                            <select id="eventoEstado" required class="w-full bg-black border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:border-blue-500 focus:outline-none transition">
+                                <option value="abierto">Abierto (activo)</option>
+                                <option value="cerrado">Cerrado (inactivo)</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
-                <button type="submit" id="btnRegistrarEvento" class="w-full bg-white text-black font-bold py-2 rounded-md border border-white hover:bg-transparent hover:text-white transition-all">Registrar Evento</button>
-                <button type="button" id="btnCancelarEdicionEvento" class="w-full bg-transparent border border-white text-white py-2 rounded-md hover:bg-white hover:text-black transition-all hidden">Cancelar Edición</button>
+
+                <!-- Descripción y Detalles -->
+                <div class="border-b border-white/20 pb-4">
+                    <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <span class="w-6 h-6 bg-blue-500/30 rounded-full flex items-center justify-center text-xs">2</span>
+                        Descripción y Detalles
+                    </h3>
+                    <div>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Descripción breve:</label>
+                        <textarea id="eventoDescripcion" rows="3" class="w-full bg-black border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:border-blue-500 focus:outline-none transition placeholder-gray-500 resize-none" placeholder="Describe brevemente el evento o proyecto..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Período de Tiempo -->
+                <div class="border-b border-white/20 pb-4">
+                    <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <span class="w-6 h-6 bg-blue-500/30 rounded-full flex items-center justify-center text-xs">3</span>
+                        Período de Ejecución
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-gray-300 text-sm font-medium mb-2">Fecha de inicio:</label>
+                            <input type="date" id="eventoFechaInicio" required class="w-full bg-black border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:border-blue-500 focus:outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-gray-300 text-sm font-medium mb-2">Fecha de cierre:</label>
+                            <input type="date" id="eventoFechaFin" required class="w-full bg-black border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:border-blue-500 focus:outline-none transition">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Participantes -->
+                <div class="pb-4">
+                    <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <span class="w-6 h-6 bg-blue-500/30 rounded-full flex items-center justify-center text-xs">4</span>
+                        Seleccionar Participantes
+                    </h3>
+                    <p class="text-gray-400 text-xs mb-3">Elige los miembros que participarán en este evento</p>
+                    <div id="participantesCheckboxes" class="bg-black/40 border border-gray-700 p-4 rounded-lg max-h-48 overflow-y-auto space-y-2">
+                        <p class="text-gray-400 text-sm text-center py-4">⏳ Cargando miembros...</p>
+                    </div>
+                </div>
+
+                <!-- Botones de Acción -->
+                <div class="flex gap-3 pt-4">
+                    <button type="submit" id="btnRegistrarEvento" class="flex-1 bg-white text-black font-bold py-2.5 rounded-lg border border-white hover:bg-transparent hover:text-white transition-all duration-300 tracking-wide">Registrar Evento</button>
+                    <button type="button" id="btnCancelarEdicionEvento" class="flex-1 bg-transparent border border-gray-500 text-gray-400 font-bold py-2.5 rounded-lg hover:border-red-500 hover:text-red-400 transition-all hidden">Cancelar Edición</button>
+                </div>
             </form>
         </div>
 
         <div>
-            <h2 class="text-2xl font-bold text-center mb-6">Eventos / Proyectos Registrados</h2>
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-white text-center">Eventos / Proyectos Registrados</h2>
+                <p class="text-gray-400 text-sm mt-2 text-center">Visualización completa de eventos, proyectos y actividades</p>
+            </div>
             <div id="listaEventos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
         </div>
     </div>
