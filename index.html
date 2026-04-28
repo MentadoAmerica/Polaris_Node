@@ -8,11 +8,49 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link href="./dist/output.css" rel="stylesheet">
     <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), 
                         url('https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');
             background-size: cover;
             background-attachment: fixed;
+        }
+
+        /* Menú hamburguesa */
+        #navMenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        #navMenu.active {
+            max-height: 300px;
+        }
+
+        #hamburger {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            #hamburger {
+                display: block;
+                cursor: pointer;
+            }
+
+            #navMenu {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: #000/80;
+                backdrop-filter: blur(10px);
+                flex-direction: column;
+                padding: 1rem;
+                gap: 0.5rem;
+            }
         }
 
         /* Estilos para Flatpickr - Calendario */
@@ -167,104 +205,154 @@
         .rocket-animation {
             animation: rocket-float 3s ease-in-out infinite;
         }
+
+        /* Menú hamburguesa responsive */
+        #navMenu {
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+
+        #navMenu.active {
+            max-height: 300px;
+            opacity: 1;
+        }
+
+        @media (min-width: 1024px) {
+            #hamburger {
+                display: none !important;
+            }
+            #navMenu {
+                max-height: none !important;
+                opacity: 1 !important;
+            }
+        }
     </style>
 </head>
 <body class="text-white font-sans antialiased">
     <nav class="fixed top-0 left-0 w-full z-50 bg-black/40 backdrop-blur-md border-b border-white/10">
-      <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-        <h1 class="text-white text-xl font-bold tracking-widest">POLARIS</h1>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
+        <h1 class="text-lg sm:text-xl font-bold tracking-widest">POLARIS</h1>
 
-        <div class="flex gap-6 text-white text-sm font-medium">
-          <a href="#inicio" class="hover:text-gray-300">Inicio</a>
-          <a href="#personal" class="hover:text-gray-300">Miembros</a>
-          <a href="#eventos" class="hover:text-gray-300">Eventos</a>
+        <!-- Botón hamburguesa (solo en sm, md) -->
+        <button id="hamburger" class="lg:hidden text-white text-2xl hover:text-gray-300 transition">
+          <span>☰</span>
+        </button>
+
+        <!-- Navegación desktop (lg+) y móvil (sm, md) -->
+        <div id="navMenu" class="absolute lg:relative top-full lg:top-auto left-0 right-0 lg:right-auto bg-black/90 lg:bg-transparent backdrop-blur-md lg:backdrop-blur-none border-b lg:border-b-0 border-white/10">
+          <div class="flex flex-col lg:flex-row gap-3 sm:gap-4 md:gap-5 lg:gap-6 text-white text-xs sm:text-sm font-medium p-4 lg:p-0">
+            <a href="#inicio" class="hover:text-gray-300 transition py-2 lg:py-0">Inicio</a>
+            <a href="#personal" class="hover:text-gray-300 transition py-2 lg:py-0">Miembros</a>
+            <a href="#eventos" class="hover:text-gray-300 transition py-2 lg:py-0">Eventos</a>
+            <a href="#resumen" class="hover:text-gray-300 transition py-2 lg:py-0">Equipos</a>
+          </div>
         </div>
       </div>
     </nav>
 
-    <section id="inicio" class="min-h-screen flex items-center justify-center px-6 pt-24 text-white">
-      <div class="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+    <script>
+      const hamburger = document.getElementById('hamburger');
+      const navMenu = document.getElementById('navMenu');
+      
+      hamburger.addEventListener('click', () => {
+        navMenu.classList.toggle('active');
+      });
+      
+      document.querySelectorAll('#navMenu a').forEach(link => {
+        link.addEventListener('click', () => {
+          navMenu.classList.remove('active');
+        });
+      });
+    </script>
 
-        <div class="bg-black/35 backdrop-blur-md border border-white/10 rounded-3xl p-10 shadow-2xl">
-          <p class="text-sm uppercase tracking-[0.4em] text-gray-300 mb-4">
+    <section id="inicio" class="min-h-screen flex items-center justify-center px-3 sm:px-6 pt-20 sm:pt-24 text-white">
+      <div class="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-10 items-center">
+
+        <div class="bg-black/35 backdrop-blur-md border border-white/10 rounded-2xl sm:rounded-3xl p-6 sm:p-10 shadow-2xl">
+          <p class="text-xs sm:text-sm uppercase tracking-[0.4em] text-gray-300 mb-4">
             Sistema de Gestión
           </p>
 
-          <h2 class="text-5xl md:text-7xl font-black mb-6 tracking-tight">
+          <h2 class="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-4 sm:mb-6 tracking-tight">
             POLARIS
           </h2>
 
-          <h3 class="text-2xl font-semibold mb-4">
-            Pagina Central del Equipo
+          <h3 class="text-lg sm:text-2xl font-semibold mb-4">
+            Página Central del Equipo
           </h3>
 
-          <p class="text-gray-200 text-lg leading-relaxed mb-8">
+          <p class="text-gray-200 text-sm sm:text-base md:text-lg leading-relaxed mb-6 sm:mb-8">
             Portal web diseñado para administrar miembros, proyectos y eventos del equipo,
             integrando la información principal en una sola plataforma.
           </p>
 
-          <div class="flex flex-wrap gap-4">
-            <a href="#personal" class="bg-white text-black px-6 py-3 rounded-xl font-bold hover:bg-gray-200 transition">
+          <div class="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4">
+            <a href="#personal" class="text-center bg-white text-black px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-bold hover:bg-gray-200 transition text-sm sm:text-base">
               Ver miembros
             </a>
 
-            <a href="#eventos" class="border border-white/30 bg-white/10 px-6 py-3 rounded-xl font-bold hover:bg-white/20 transition">
+            <a href="#eventos" class="text-center border border-white/30 bg-white/10 px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-bold hover:bg-white/20 transition text-sm sm:text-base">
               Ver eventos
+            </a>
+             <a href="#resumen" class="text-center border border-teal-600/50 bg-teal-600/20 px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-bold hover:bg-teal-600/30 transition text-sm sm:text-base">
+              Ver equipos
             </a>
           </div>
         </div>
 
-        <div class="relative h-96 hidden lg:flex items-center justify-center">
-          <!-- Espacio para tu imagen -->
-          <img src="coheteee.png" alt="Logo" width="600" height="600" class="drop-shadow-2xl">
+<div class="flex items-center justify-center w-full mt-6 lg:mt-0">
+<img src="coheteee.png" alt="Logo"
+     class="rocket-animation w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg h-auto object-contain mx-auto"
+     loading="lazy">
 
-          <!-- Línea de horizonte minimalista -->
         </div>
       </div>
     </section>
 
-    <section id="personal" class="py-8">
-    <div class="container mx-auto px-4 py-8 max-w-6xl">
-        <header class="text-center mb-12">
-            <h1 class="text-5xl font-bold tracking-tight text-white mb-2">SISTEMA POLARIS</h1>
-            <p class="text-gray-400 text-lg">Módulo de Gestión de Tripulación y Eventos</p>
+    <section id="personal" class="py-6 sm:py-8 md:py-12">
+    <div class="container mx-auto px-3 sm:px-4 py-6 sm:py-8 max-w-6xl">
+        <header class="text-center mb-8 sm:mb-12">
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white mb-2">SISTEMA POLARIS</h1>
+            <p class="text-gray-400 text-xs sm:text-sm md:text-lg">Módulo de Gestión de Tripulación y Eventos</p>
         </header>
 
-        <div class="bg-black/70 backdrop-blur-md border border-white/10 rounded-xl p-8 mb-12 max-w-4xl mx-auto shadow-2xl">
-            <h2 class="text-2xl font-bold text-white border-l-4 border-white pl-4 mb-6">Registro de Personal</h2>
-            <form id="formRegistro" class="space-y-5" autocomplete="off">
+        <div class="bg-black/70 backdrop-blur-md border border-white/10 rounded-xl p-4 sm:p-6 md:p-8 mb-12 max-w-4xl mx-auto shadow-2xl">
+            <h2 class="text-xl sm:text-2xl font-bold text-white border-l-4 border-white pl-3 sm:pl-4 mb-6">Registro de Personal</h2>
+            <form id="formRegistro" class="space-y-4 sm:space-y-5" autocomplete="off">
                 <input type="hidden" id="miembroId">
 
                 <div class="border-b border-white/20 pb-4 mb-2">
-                    <h3 class="text-lg font-semibold text-white mb-3">Datos Personales</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <h3 class="text-base sm:text-lg font-semibold text-white mb-3">Datos Personales</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                         <div>
-                            <label class="block text-gray-300 text-sm font-medium mb-1">Nombre(s)</label>
-                            <input type="text" id="nombre" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
+                            <label class="block text-gray-300 text-xs sm:text-sm font-medium mb-1">Nombre(s)</label>
+                            <input type="text" id="nombre" required class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
                         </div>
                         <div>
-                            <label class="block text-gray-300 text-sm font-medium mb-1">Apellido Paterno</label>
-                            <input type="text" id="apellidoPaterno" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
+                            <label class="block text-gray-300 text-xs sm:text-sm font-medium mb-1">Apellido Paterno</label>
+                            <input type="text" id="apellidoPaterno" required class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
                         </div>
                         <div>
-                            <label class="block text-gray-300 text-sm font-medium mb-1">Apellido Materno</label>
-                            <input type="text" id="apellidoMaterno" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
+                            <label class="block text-gray-300 text-xs sm:text-sm font-medium mb-1">Apellido Materno</label>
+                            <input type="text" id="apellidoMaterno" required class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
                         </div>
                         <div>
-                            <label class="block text-gray-300 text-sm font-medium mb-1">Correo Electrónico (Personal)</label>
-                            <input type="email" id="correo" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
+                            <label class="block text-gray-300 text-xs sm:text-sm font-medium mb-1">Correo Electrónico (Personal)</label>
+                            <input type="email" id="correo" required class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
                         </div>
                         <div>
-                            <label class="block text-gray-300 text-sm font-medium mb-1">Teléfono Móvil (10 dígitos)</label>
-                            <input type="tel" id="telefono" pattern="\d{10}" maxlength="10" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
+                            <label class="block text-gray-300 text-xs sm:text-sm font-medium mb-1">Teléfono Móvil (10 dígitos)</label>
+                            <input type="tel" id="telefono" pattern="\d{10}" maxlength="10" required class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
                         </div>
                         <div>
-                            <label class="block text-gray-300 text-sm font-medium mb-1">Fecha de Nacimiento</label>
-                            <input type="text" id="fechaNacimiento" placeholder="dd/mm/aaaa" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
+                            <label class="block text-gray-300 text-xs sm:text-sm font-medium mb-1">Fecha de Nacimiento</label>
+                            <input type="text" id="fechaNacimiento" placeholder="dd/mm/aaaa" required class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
                         </div>
                         <div>
-                            <label class="block text-gray-300 text-sm font-medium mb-1">Género</label>
-                            <select id="genero" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
+                            <label class="block text-gray-300 text-xs sm:text-sm font-medium mb-1">Género</label>
+                            <select id="genero" required class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
                                 <option value="">Seleccionar</option>
                                 <option value="Masculino">Masculino</option>
                                 <option value="Femenino">Femenino</option>
