@@ -19,7 +19,6 @@
             background-attachment: fixed;
         }
 
-        /* Menú hamburguesa */
         #navMenu {
             max-height: 0;
             overflow: hidden;
@@ -53,7 +52,6 @@
             }
         }
 
-        /* Estilos para Flatpickr - Calendario */
         .flatpickr-calendar {
             background: #1a1a2e !important;
             border: 1px solid #3b82f6 !important;
@@ -147,7 +145,6 @@
             border: 1px solid #3b82f6 !important;
         }
 
-        /* Inputs de fecha */
         #fechaNacimiento,
         #eventoFechaInicio,
         #eventoFechaFin {
@@ -161,7 +158,6 @@
             box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1) !important;
         }
 
-        /* Estilo para select de tipo con iconos */
         #eventoTipo {
             background-image: url('data:image/svg+xml;utf8,<svg fill="white" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
             background-repeat: no-repeat;
@@ -171,14 +167,12 @@
             appearance: none;
         }
 
-        /* Estilos para Estado - Abierto (verde) */
         #eventoEstado.estado-abierto {
             background-color: rgba(16, 185, 129, 0.2) !important;
             border-color: #10b981 !important;
             color: #a7f3d0 !important;
         }
 
-        /* Estilos para Estado - Cerrado (rojo) */
         #eventoEstado.estado-cerrado {
             background-color: rgba(239, 68, 68, 0.2) !important;
             border-color: #ef4444 !important;
@@ -191,7 +185,6 @@
             padding: 8px;
         }
 
-        /* Animaciones de portada */
         @keyframes float {
             0%, 100% { transform: translateY(0px) rotate(0deg); }
             50% { transform: translateY(-20px) rotate(5deg); }
@@ -206,7 +199,6 @@
             animation: rocket-float 3s ease-in-out infinite;
         }
 
-        /* Menú hamburguesa responsive */
         #navMenu {
             transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
             max-height: 0;
@@ -228,19 +220,99 @@
                 opacity: 1 !important;
             }
         }
+
+        /* Mensajes de error junto al campo */
+        .error-message {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            border-left: 4px solid #ef4444;
+            border-radius: 6px;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.8rem;
+            color: #f3f4f6;
+            font-weight: 500;
+            animation: fadeIn 0.2s ease-out;
+        }
+        .error-message .icon {
+            font-size: 1rem;
+            line-height: 1;
+            color: #ef4444;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Toasts más grandes y legibles */
+        .toast-message {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            animation: slideIn 0.3s ease-out;
+            max-width: 450px;
+            min-width: 280px;
+            backdrop-filter: blur(12px);
+            background: rgba(0, 0, 0, 0.9);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+            transition: all 0.2s;
+            padding: 1rem 1.25rem;
+        }
+        .toast-message.success {
+            border-left: 6px solid #10b981;
+        }
+        .toast-message.error {
+            border-left: 6px solid #ef4444;
+        }
+        .toast-message.warning {
+            border-left: 6px solid #f59e0b;
+        }
+        .toast-message.delete {
+            border-left: 6px solid #ef4444;
+        }
+        .toast-message .icon {
+            font-size: 1.75rem;
+            line-height: 1;
+        }
+        .toast-message .message {
+            color: #f3f4f6;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        .toast-message button {
+            color: #9ca3af;
+            font-size: 1.25rem;
+            transition: color 0.2s;
+        }
+        .toast-message button:hover {
+            color: white;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 <body class="text-white font-sans antialiased">
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-3"></div>
+
     <nav class="fixed top-0 left-0 w-full z-50 bg-black/40 backdrop-blur-md border-b border-white/10">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
         <h1 class="text-lg sm:text-xl font-bold tracking-widest">POLARIS</h1>
-
-        <!-- Botón hamburguesa (solo en sm, md) -->
         <button id="hamburger" class="lg:hidden text-white text-2xl hover:text-gray-300 transition">
           <span>☰</span>
         </button>
-
-        <!-- Navegación desktop (lg+) y móvil (sm, md) -->
         <div id="navMenu" class="absolute lg:relative top-full lg:top-auto left-0 right-0 lg:right-auto bg-black/90 lg:bg-transparent backdrop-blur-md lg:backdrop-blur-none border-b lg:border-b-0 border-white/10">
           <div class="flex flex-col lg:flex-row gap-3 sm:gap-4 md:gap-5 lg:gap-6 text-white text-xs sm:text-sm font-medium p-4 lg:p-0">
             <a href="#inicio" class="hover:text-gray-300 transition py-2 lg:py-0">Inicio</a>
@@ -255,58 +327,30 @@
     <script>
       const hamburger = document.getElementById('hamburger');
       const navMenu = document.getElementById('navMenu');
-      
-      hamburger.addEventListener('click', () => {
-        navMenu.classList.toggle('active');
-      });
-      
+      hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
       document.querySelectorAll('#navMenu a').forEach(link => {
-        link.addEventListener('click', () => {
-          navMenu.classList.remove('active');
-        });
+        link.addEventListener('click', () => navMenu.classList.remove('active'));
       });
     </script>
 
     <section id="inicio" class="min-h-screen flex items-center justify-center px-3 sm:px-6 pt-20 sm:pt-24 text-white">
       <div class="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-10 items-center">
-
         <div class="bg-black/35 backdrop-blur-md border border-white/10 rounded-2xl sm:rounded-3xl p-6 sm:p-10 shadow-2xl">
-          <p class="text-xs sm:text-sm uppercase tracking-[0.4em] text-gray-300 mb-4">
-            Sistema de Gestión
-          </p>
-
-          <h2 class="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-4 sm:mb-6 tracking-tight">
-            POLARIS
-          </h2>
-
-          <h3 class="text-lg sm:text-2xl font-semibold mb-4">
-            Página Central del Equipo
-          </h3>
-
+          <p class="text-xs sm:text-sm uppercase tracking-[0.4em] text-gray-300 mb-4">Sistema de Gestión</p>
+          <h2 class="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-4 sm:mb-6 tracking-tight">POLARIS</h2>
+          <h3 class="text-lg sm:text-2xl font-semibold mb-4">Página Central del Equipo</h3>
           <p class="text-gray-200 text-sm sm:text-base md:text-lg leading-relaxed mb-6 sm:mb-8">
             Portal web diseñado para administrar miembros, proyectos y eventos del equipo,
             integrando la información principal en una sola plataforma.
           </p>
-
           <div class="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4">
-            <a href="#personal" class="text-center bg-white text-black px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-bold hover:bg-gray-200 transition text-sm sm:text-base">
-              Ver miembros
-            </a>
-
-            <a href="#eventos" class="text-center border border-white/30 bg-white/10 px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-bold hover:bg-white/20 transition text-sm sm:text-base">
-              Ver eventos
-            </a>
-             <a href="#resumen" class="text-center border border-teal-600/50 bg-teal-600/20 px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-bold hover:bg-teal-600/30 transition text-sm sm:text-base">
-              Ver equipos
-            </a>
+            <a href="#personal" class="text-center bg-white text-black px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-bold hover:bg-gray-200 transition text-sm sm:text-base">Ver miembros</a>
+            <a href="#eventos" class="text-center border border-white/30 bg-white/10 px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-bold hover:bg-white/20 transition text-sm sm:text-base">Ver eventos</a>
+            <a href="#resumen" class="text-center border border-teal-600/50 bg-teal-600/20 px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-bold hover:bg-teal-600/30 transition text-sm sm:text-base">Ver equipos</a>
           </div>
         </div>
-
-<div class="flex items-center justify-center w-full mt-6 lg:mt-0">
-<img src="coheteee.png" alt="Logo"
-     class="rocket-animation w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg h-auto object-contain mx-auto"
-     loading="lazy">
-
+        <div class="flex items-center justify-center w-full mt-6 lg:mt-0">
+          <img src="coheteee.png" alt="Logo" class="rocket-animation w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg h-auto object-contain mx-auto" loading="lazy">
         </div>
       </div>
     </section>
@@ -326,56 +370,54 @@
                 <div class="border-b border-white/20 pb-4 mb-2">
                     <h3 class="text-base sm:text-lg font-semibold text-white mb-3">Datos Personales</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                        <div>
+                        <div class="campo-container">
                             <label class="block text-gray-300 text-xs sm:text-sm font-medium mb-1">Nombre(s)</label>
-                            <input type="text" id="nombre" required class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
+                            <input type="text" id="nombre" class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
+                            <div class="error-placeholder"></div>
                         </div>
-                        <div>
-                            <label class="block text-gray-300 text-xs sm:text-sm font-medium mb-1">Apellido Paterno</label>
-                            <input type="text" id="apellidoPaterno" required class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
+                        <div class="campo-container">
+                            <label class="block text-gray-300 text-xs sm:text-sm font-medium mb-1">Apellido(s)</label>
+                            <input type="text" id="apellidos" class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
+                            <div class="error-placeholder"></div>
                         </div>
-                        <div>
-                            <label class="block text-gray-300 text-xs sm:text-sm font-medium mb-1">Apellido Materno</label>
-                            <input type="text" id="apellidoMaterno" required class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
-                        </div>
-                        <div>
+                        <div class="campo-container">
                             <label class="block text-gray-300 text-xs sm:text-sm font-medium mb-1">Correo Electrónico (Personal)</label>
-                            <input type="email" id="correo" required class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
+                            <input type="email" id="correo" class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
+                            <div class="error-placeholder"></div>
                         </div>
-                        <div>
+                        <div class="campo-container">
                             <label class="block text-gray-300 text-xs sm:text-sm font-medium mb-1">Teléfono Móvil (10 dígitos)</label>
-                            <input type="tel" id="telefono" pattern="\d{10}" maxlength="10" required class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
+                            <input type="tel" id="telefono" pattern="\d{10}" maxlength="10" class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
+                            <div class="error-placeholder"></div>
                         </div>
-                        <div>
+                        <div class="campo-container">
                             <label class="block text-gray-300 text-xs sm:text-sm font-medium mb-1">Fecha de Nacimiento</label>
-                            <input type="text" id="fechaNacimiento" placeholder="dd/mm/aaaa" required class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
+                            <input type="text" id="fechaNacimiento" placeholder="dd/mm/aaaa" class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
+                            <div class="error-placeholder"></div>
                         </div>
-                        <div>
+                        <div class="campo-container">
                             <label class="block text-gray-300 text-xs sm:text-sm font-medium mb-1">Género</label>
-                            <select id="genero" required class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
+                            <select id="genero" class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
                                 <option value="">Seleccionar</option>
                                 <option value="Masculino">Masculino</option>
                                 <option value="Femenino">Femenino</option>
                                 <option value="Otro">Otro</option>
                             </select>
+                            <div class="error-placeholder"></div>
                         </div>
-                    </div>
-                </div>
-
-                <div class="pb-2">
-                    <h3 class="text-lg font-semibold text-white mb-3">Datos Académicos</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-gray-300 text-sm font-medium mb-1">Institución Educativa</label>
-                            <input type="text" id="institucion" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
+                        <div class="campo-container">
+                            <label class="block text-gray-300 text-xs sm:text-sm font-medium mb-1">Institución Educativa</label>
+                            <input type="text" id="institucion" class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
+                            <div class="error-placeholder"></div>
                         </div>
-                        <div>
-                            <label class="block text-gray-300 text-sm font-medium mb-1">Número de Control (8 o 9 dígitos)</label>
-                            <input type="text" id="numeroControl" pattern="\d{8,9}" maxlength="9" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
+                        <div class="campo-container">
+                            <label class="block text-gray-300 text-xs sm:text-sm font-medium mb-1">Número de Control (8 o 9 dígitos)</label>
+                            <input type="text" id="numeroControl" pattern="\d{8,9}" maxlength="9" class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
+                            <div class="error-placeholder"></div>
                         </div>
-                        <div>
-                            <label class="block text-gray-300 text-sm font-medium mb-1">Carrera</label>
-                            <select id="carrera" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
+                        <div class="campo-container">
+                            <label class="block text-gray-300 text-xs sm:text-sm font-medium mb-1">Carrera</label>
+                            <select id="carrera" class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
                                 <option value="">Seleccionar carrera...</option>
                                 <option value="Ingeniería en Sistemas Computacionales">Ingeniería en Sistemas Computacionales</option>
                                 <option value="Ingeniería Civil">Ingeniería Civil</option>
@@ -385,29 +427,33 @@
                                 <option value="Administración">Administración</option>
                                 <option value="Ingeniería Industrial">Ingeniería Industrial</option>
                             </select>
+                            <div class="error-placeholder"></div>
                         </div>
-                        <div>
-                            <label class="block text-gray-300 text-sm font-medium mb-1">Semestre</label>
-                            <select id="semestre" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
+                        <div class="campo-container">
+                            <label class="block text-gray-300 text-xs sm:text-sm font-medium mb-1">Semestre</label>
+                            <select id="semestre" class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
                                 <option value="">Seleccionar semestre</option>
                                 <option value="1">1</option><option value="2">2</option><option value="3">3</option>
                                 <option value="4">4</option><option value="5">5</option><option value="6">6</option>
                                 <option value="7">7</option><option value="8">8</option><option value="9">9</option>
                                 <option value="Egresado">Egresado</option>
                             </select>
+                            <div class="error-placeholder"></div>
                         </div>
-                        <div>
-                            <label class="block text-gray-300 text-sm font-medium mb-1">Año de Ingreso</label>
-                            <input type="number" id="anioIngreso" min="2000" max="2030" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
+                        <div class="campo-container">
+                            <label class="block text-gray-300 text-xs sm:text-sm font-medium mb-1">Año de Ingreso</label>
+                            <input type="number" id="anioIngreso" min="2000" max="2030" class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
+                            <div class="error-placeholder"></div>
                         </div>
-                        <div>
-                            <label class="block text-gray-300 text-sm font-medium mb-1">Rol en el equipo</label>
-                            <select id="rol" required class="w-full bg-black border border-gray-700 text-white rounded-md px-4 py-2">
+                        <div class="campo-container">
+                            <label class="block text-gray-300 text-xs sm:text-sm font-medium mb-1">Rol en el equipo</label>
+                            <select id="rol" class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
                                 <option value="">Seleccionar rol...</option>
                                 <option value="Administrador">ADMINISTRADOR</option>
                                 <option value="Desarrollador">DESARROLLADOR</option>
                                 <option value="Diseñador">DISEÑADOR</option>
                             </select>
+                            <div class="error-placeholder"></div>
                         </div>
                     </div>
                 </div>
@@ -433,68 +479,70 @@
             <form id="formEvento" class="space-y-6" autocomplete="off">
                 <input type="hidden" id="eventoId">
                 
-                <!-- Información General -->
                 <div class="border-b border-white/20 pb-4">
                     <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                         <span class="w-6 h-6 bg-blue-500/30 rounded-full flex items-center justify-center text-xs">1</span>
                         Información General
                     </h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="md:col-span-2">
+                        <div class="md:col-span-2 campo-container">
                             <label class="block text-gray-300 text-sm font-medium mb-2">Nombre del evento/proyecto:</label>
-                            <input type="text" id="eventoNombre" required class="w-full bg-black border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:border-blue-500 focus:outline-none transition placeholder-gray-500" placeholder="Ej: Competencia de Robótica 2024">
+                            <input type="text" id="eventoNombre" class="w-full bg-black border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:border-blue-500 focus:outline-none transition placeholder-gray-500">
+                            <div class="error-placeholder"></div>
                         </div>
-                        <div>
+                        <div class="campo-container">
                             <label class="block text-gray-300 text-sm font-medium mb-2">Tipo:</label>
-                            <select id="eventoTipo" required class="w-full bg-black border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:border-blue-500 focus:outline-none transition">
+                            <select id="eventoTipo" class="w-full bg-black border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:border-blue-500 focus:outline-none transition">
                                 <option value="">Seleccionar tipo...</option>
                                 <option value="Proyecto">◆ Proyecto</option>
                                 <option value="Evento">✦ Evento</option>
                                 <option value="Competencia">⬢ Competencia</option>
                                 <option value="Actividad">● Actividad</option>
                             </select>
+                            <div class="error-placeholder"></div>
                         </div>
-                        <div>
+                        <div class="campo-container">
                             <label class="block text-gray-300 text-sm font-medium mb-2">Estado:</label>
-                            <select id="eventoEstado" required class="w-full bg-black border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:border-blue-500 focus:outline-none transition">
+                            <select id="eventoEstado" class="w-full bg-black border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:border-blue-500 focus:outline-none transition">
                                 <option value="abierto">Abierto (activo)</option>
                                 <option value="cerrado">Cerrado (inactivo)</option>
                             </select>
+                            <div class="error-placeholder"></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Descripción y Detalles -->
                 <div class="border-b border-white/20 pb-4">
                     <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                         <span class="w-6 h-6 bg-blue-500/30 rounded-full flex items-center justify-center text-xs">2</span>
                         Descripción y Detalles
                     </h3>
-                    <div>
+                    <div class="campo-container">
                         <label class="block text-gray-300 text-sm font-medium mb-2">Descripción breve:</label>
-                        <textarea id="eventoDescripcion" rows="3" class="w-full bg-black border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:border-blue-500 focus:outline-none transition placeholder-gray-500 resize-none" placeholder="Describe brevemente el evento o proyecto..."></textarea>
+                        <textarea id="eventoDescripcion" rows="3" class="w-full bg-black border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:border-blue-500 focus:outline-none transition placeholder-gray-500 resize-none"></textarea>
+                        <div class="error-placeholder"></div>
                     </div>
                 </div>
 
-                <!-- Período de Tiempo -->
                 <div class="border-b border-white/20 pb-4">
                     <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                         <span class="w-6 h-6 bg-blue-500/30 rounded-full flex items-center justify-center text-xs">3</span>
                         Período de Ejecución
                     </h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
+                        <div class="campo-container">
                             <label class="block text-gray-300 text-sm font-medium mb-2">Fecha de inicio:</label>
-                            <input type="date" id="eventoFechaInicio" required class="w-full bg-black border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:border-blue-500 focus:outline-none transition">
+                            <input type="date" id="eventoFechaInicio" class="w-full bg-black border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:border-blue-500 focus:outline-none transition">
+                            <div class="error-placeholder"></div>
                         </div>
-                        <div>
+                        <div class="campo-container">
                             <label class="block text-gray-300 text-sm font-medium mb-2">Fecha de cierre:</label>
-                            <input type="date" id="eventoFechaFin" required class="w-full bg-black border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:border-blue-500 focus:outline-none transition">
+                            <input type="date" id="eventoFechaFin" class="w-full bg-black border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:border-blue-500 focus:outline-none transition">
+                            <div class="error-placeholder"></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Participantes -->
                 <div class="pb-4">
                     <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                         <span class="w-6 h-6 bg-blue-500/30 rounded-full flex items-center justify-center text-xs">4</span>
@@ -506,7 +554,6 @@
                     </div>
                 </div>
 
-                <!-- Botones de Acción -->
                 <div class="flex gap-3 pt-4">
                     <button type="submit" id="btnRegistrarEvento" class="flex-1 bg-white text-black font-bold py-2.5 rounded-lg border border-white hover:bg-transparent hover:text-white transition-all duration-300 tracking-wide">Registrar Evento</button>
                     <button type="button" id="btnCancelarEdicionEvento" class="flex-1 bg-transparent border border-gray-500 text-gray-400 font-bold py-2.5 rounded-lg hover:border-red-500 hover:text-red-400 transition-all hidden">Cancelar Edición</button>

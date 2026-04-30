@@ -13,22 +13,31 @@ app.get('/api/miembros', (req, res) => {
     res.json(miembros);
 });
 
+app.get('/api/miembros/:id', (req, res) => {
+    const { id } = req.params;
+    const miembro = miembros.find(m => m.id == id);
+    if (miembro) {
+        res.json(miembro);
+    } else {
+        res.status(404).json({ mensaje: "Miembro no encontrado" });
+    }
+});
+
 app.post('/api/miembros', (req, res) => {
     const {
-        nombre, apellido_paterno, apellido_materno, correo, telefono,
+        nombre, apellidos, correo, telefono,
         fecha_nacimiento, genero, institucion, numero_control, carrera,
         semestre, anio_ingreso, rol
     } = req.body;
 
-    if (!nombre || !apellido_paterno || !correo || !telefono || !fecha_nacimiento || !rol) {
-        return res.status(400).json({ mensaje: "Faltan campos obligatorios" });
+    if (!nombre || !apellidos || !correo || !telefono || !fecha_nacimiento || !rol) {
+        return res.status(400).json({ mensaje: "Faltan campos obligatorios (nombre, apellidos, correo, teléfono, fecha nacimiento, rol)" });
     }
 
     const nuevoMiembro = {
         id: Date.now(),
         nombre,
-        apellido_paterno,
-        apellido_materno: apellido_materno || '',
+        apellidos,
         correo,
         telefono,
         fecha_nacimiento,
@@ -48,7 +57,7 @@ app.post('/api/miembros', (req, res) => {
 app.put('/api/miembros/:id', (req, res) => {
     const { id } = req.params;
     const {
-        nombre, apellido_paterno, apellido_materno, correo, telefono,
+        nombre, apellidos, correo, telefono,
         fecha_nacimiento, genero, institucion, numero_control, carrera,
         semestre, anio_ingreso, rol
     } = req.body;
@@ -61,8 +70,7 @@ app.put('/api/miembros/:id', (req, res) => {
     miembros[index] = {
         id: Number(id),
         nombre,
-        apellido_paterno,
-        apellido_materno: apellido_materno || '',
+        apellidos,
         correo,
         telefono,
         fecha_nacimiento,
@@ -88,11 +96,21 @@ app.get('/api/eventos', (req, res) => {
     res.json(eventos);
 });
 
+app.get('/api/eventos/:id', (req, res) => {
+    const { id } = req.params;
+    const evento = eventos.find(e => e.id == id);
+    if (evento) {
+        res.json(evento);
+    } else {
+        res.status(404).json({ mensaje: "Evento no encontrado" });
+    }
+});
+
 app.post('/api/eventos', (req, res) => {
     const { nombre, tipo, descripcion, fecha_inicio, fecha_fin, estado, participantes } = req.body;
     
     if (!nombre || !tipo || !fecha_inicio || !fecha_fin || !estado) {
-        return res.status(400).json({ mensaje: "Faltan campos obligatorios" });
+        return res.status(400).json({ mensaje: "Faltan campos obligatorios: nombre, tipo, fecha inicio, fecha fin, estado" });
     }
     
     const nuevoEvento = {
@@ -108,16 +126,6 @@ app.post('/api/eventos', (req, res) => {
     
     eventos.push(nuevoEvento);
     res.status(201).json({ mensaje: "Evento registrado", evento: nuevoEvento });
-});
-
-app.get('/api/eventos/:id', (req, res) => {
-    const { id } = req.params;
-    const evento = eventos.find(e => e.id == id);
-    if (evento) {
-        res.json(evento);
-    } else {
-        res.status(404).json({ mensaje: "Evento no encontrado" });
-    }
 });
 
 app.put('/api/eventos/:id', (req, res) => {
