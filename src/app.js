@@ -13,7 +13,6 @@ const eventoIdHidden = document.getElementById('eventoId');
 const btnRegistrarEvento = document.getElementById('btnRegistrarEvento');
 const btnCancelarEdicionEvento = document.getElementById('btnCancelarEdicionEvento');
 
-// ========== SISTEMA DE TOASTS (más grandes y legibles) ==========
 function mostrarMensaje(mensaje, tipo = 'exito') {
     const container = document.getElementById('toastContainer');
     if (!container) return;
@@ -55,7 +54,6 @@ function mostrarMensaje(mensaje, tipo = 'exito') {
     setTimeout(() => { if (toast.parentElement) toast.remove(); }, 4800);
 }
 
-// ========== FUNCIONES PARA MANEJAR ERRORES JUNTO AL CAMPO ==========
 function limpiarErrores(contenedor) {
     const placeholders = contenedor.querySelectorAll('.error-placeholder');
     placeholders.forEach(ph => ph.innerHTML = '');
@@ -82,7 +80,6 @@ function limpiarErrorCampo(campo) {
     if (placeholder) placeholder.innerHTML = '';
 }
 
-// ========== VALIDACIONES INDIVIDUALES EN TIEMPO REAL ==========
 function validarCampoMiembro(campo) {
     const id = campo.id;
     const valor = campo.value.trim();
@@ -256,43 +253,123 @@ flatpickr(document.getElementById('eventoFechaFin'), {
 
 // ========== CRUD MIEMBROS ==========
 async function cargarMiembros() {
-    try {
-        const respuesta = await fetch(API_MIEMBROS);
-        const miembros = await respuesta.json();
-        listaMiembros.innerHTML = '';
-        if (miembros.length === 0) {
-            listaMiembros.innerHTML = '<p class="text-center text-gray-400">No hay miembros registrados.</p>';
-            return;
-        }
-        miembros.forEach(miembro => {
-            const nombreCompleto = `${miembro.nombre || ''} ${miembro.apellidos || ''}`.trim();
-            const fechaNac = miembro.fecha_nacimiento ? new Date(miembro.fecha_nacimiento).toLocaleDateString('es-ES') : 'No especificada';
-            const card = document.createElement('div');
-            card.className = 'member-card bg-white/5 border border-white/10 rounded-lg p-5 transition-all hover:bg-white/10';
-            card.innerHTML = `
-                <h3 class="text-xl font-bold mb-1">${nombreCompleto}</h3>
-                <p class="text-gray-400 text-xs uppercase tracking-wider mb-2">${miembro.rol || ''}</p>
-                <p class="text-gray-300 text-sm"><span class="text-gray-500">Correo:</span> ${miembro.correo || ''}</p>
-                <p class="text-gray-300 text-sm"><span class="text-gray-500">Teléfono:</span> ${miembro.telefono || 'No especificado'}</p>
-                <p class="text-gray-300 text-sm"><span class="text-gray-500">Fecha Nac.:</span> ${fechaNac}</p>
-                <p class="text-gray-300 text-sm"><span class="text-gray-500">Género:</span> ${miembro.genero || 'No especificado'}</p>
-                <p class="text-gray-300 text-sm"><span class="text-gray-500">Institución:</span> ${miembro.institucion || 'No especificado'}</p>
-                <p class="text-gray-300 text-sm"><span class="text-gray-500">No. Control:</span> ${miembro.numero_control || 'No especificado'}</p>
-                <p class="text-gray-300 text-sm"><span class="text-gray-500">Carrera:</span> ${miembro.carrera || 'No especificado'}</p>
-                <p class="text-gray-300 text-sm"><span class="text-gray-500">Semestre:</span> ${miembro.semestre || 'No especificado'}</p>
-                <p class="text-gray-300 text-sm"><span class="text-gray-500">Año Ingreso:</span> ${miembro.anio_ingreso || 'No especificado'}</p>
-                <div class="flex gap-3 mt-4">
-                    <button class="btn-edit flex-1 bg-white text-black py-2 rounded text-xs font-semibold hover:opacity-80 transition" onclick="prepararEdicion(${miembro.id})">Editar</button>
-                    <button class="btn-delete flex-1 bg-transparent border border-white text-white py-2 rounded text-xs font-semibold hover:bg-red-600 hover:border-red-600 transition" onclick="eliminarMiembro(${miembro.id})">Eliminar</button>
-                </div>
-            `;
-            listaMiembros.appendChild(card);
-        });
-        cargarParticipantesCheckboxes();
-    } catch (error) {
-        console.error(error);
-        mostrarMensaje('Error al cargar los miembros.', 'error');
+  try {
+    const respuesta = await fetch(API_MIEMBROS);
+    const miembros = await respuesta.json();
+
+    listaMiembros.innerHTML = '';
+
+    if (miembros.length === 0) {
+      listaMiembros.innerHTML = `
+        <div class="col-span-full bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10 rounded-2xl p-6 text-center text-gray-400 shadow-lg">
+          No hay miembros registrados.
+        </div>
+      `;
+      return;
     }
+
+    miembros.forEach(miembro => {
+      const nombreCompleto = `${miembro.nombre || ''} ${miembro.apellidos || ''}`.trim();
+      const fechaNac = miembro.fecha_nacimiento
+        ? new Date(miembro.fecha_nacimiento).toLocaleDateString('es-ES', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          })
+        : 'No especificada';
+
+      const inicial = nombreCompleto ? nombreCompleto.charAt(0).toUpperCase() : 'P';
+
+      const card = document.createElement('div');
+
+      card.className =
+        'bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10 rounded-2xl p-6 shadow-lg hover:shadow-2xl hover:border-white/20 transition-all duration-300 group';
+
+      card.innerHTML = `
+        <div class="flex items-start justify-between gap-4 mb-5">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center text-xl font-black text-white">
+              ${inicial}
+            </div>
+
+            <div>
+              <h3 class="text-lg font-bold text-white leading-tight uppercase">
+                ${nombreCompleto || 'SIN NOMBRE'}
+              </h3>
+              <p class="text-xs text-gray-400 mt-1">
+                ${miembro.numero_control || 'Sin número de control'}
+              </p>
+            </div>
+          </div>
+
+          <span class="px-3 py-1 rounded-full bg-white/10 border border-white/10 text-xs font-semibold text-gray-200">
+            ${miembro.rol || 'SIN ROL'}
+          </span>
+        </div>
+
+        <div class="space-y-3 text-sm">
+          <div class="bg-black/30 border border-white/10 rounded-xl p-3">
+            <p class="text-gray-400 text-xs mb-1">Correo</p>
+            <p class="text-white break-words">${miembro.correo || 'No especificado'}</p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="bg-black/30 border border-white/10 rounded-xl p-3">
+              <p class="text-gray-400 text-xs mb-1">Teléfono</p>
+              <p class="text-white">${miembro.telefono || 'No especificado'}</p>
+            </div>
+
+            <div class="bg-black/30 border border-white/10 rounded-xl p-3">
+              <p class="text-gray-400 text-xs mb-1">Nacimiento</p>
+              <p class="text-white">${fechaNac}</p>
+            </div>
+          </div>
+
+          <div class="bg-black/30 border border-white/10 rounded-xl p-3">
+            <p class="text-gray-400 text-xs mb-1">Institución</p>
+            <p class="text-white">${miembro.institucion || 'No especificada'}</p>
+          </div>
+
+          <div class="bg-black/30 border border-white/10 rounded-xl p-3">
+            <p class="text-gray-400 text-xs mb-1">Carrera</p>
+            <p class="text-white">${miembro.carrera || 'No especificada'}</p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="bg-black/30 border border-white/10 rounded-xl p-3">
+              <p class="text-gray-400 text-xs mb-1">Semestre</p>
+              <p class="text-white">${miembro.semestre || 'No especificado'}</p>
+            </div>
+
+            <div class="bg-black/30 border border-white/10 rounded-xl p-3">
+              <p class="text-gray-400 text-xs mb-1">Ingreso</p>
+              <p class="text-white">${miembro.anio_ingreso || 'No especificado'}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-3 mt-5 pt-4 border-t border-white/10">
+          <button onclick="prepararEdicion(${miembro.id})"
+            class="flex-1 bg-white text-black font-bold py-2 rounded-lg border border-white hover:bg-transparent hover:text-white transition-all duration-300">
+            Editar
+          </button>
+
+          <button onclick="eliminarMiembro(${miembro.id})"
+            class="flex-1 bg-transparent border border-gray-600 text-gray-300 font-bold py-2.5 rounded-lg hover:bg-white/10 hover:border-gray-400 transition-all duration-300">
+            Eliminar
+          </button>
+        </div>
+      `;
+
+      listaMiembros.appendChild(card);
+    });
+
+    cargarParticipantesCheckboxes();
+
+  } catch (error) {
+    console.error(error);
+    mostrarMensaje('Error al cargar los miembros.', 'error');
+  }
 }
 
 async function cargarParticipantesCheckboxes() {

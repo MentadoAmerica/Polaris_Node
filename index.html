@@ -302,6 +302,38 @@
                 opacity: 1;
             }
         }
+
+
+        /* Refinamiento final U4A12: tarjetas de personal con estilo similar a eventos */
+        .member-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)) !important;
+            border: 1px solid rgba(255,255,255,0.10) !important;
+            border-radius: 1rem !important;
+            padding: 1.5rem !important;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.25) !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .member-card:hover {
+            border-color: rgba(255,255,255,0.22) !important;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.35) !important;
+            transform: translateY(-3px);
+        }
+
+        .member-card h3 {
+            font-size: 1.15rem !important;
+            font-weight: 800 !important;
+            color: #ffffff !important;
+            margin-bottom: 0.35rem !important;
+            text-transform: uppercase;
+        }
+
+        .member-card p {
+            color: #d1d5db !important;
+            font-size: 0.9rem !important;
+            margin-bottom: 0.35rem !important;
+        }
+
     </style>
 </head>
 <body class="text-white font-sans antialiased">
@@ -362,62 +394,83 @@
             <p class="text-gray-400 text-xs sm:text-sm md:text-lg">Módulo de Gestión de Tripulación y Eventos</p>
         </header>
 
-        <div class="bg-black/70 backdrop-blur-md border border-white/10 rounded-xl p-4 sm:p-6 md:p-8 mb-12 max-w-4xl mx-auto shadow-2xl">
-            <h2 class="text-xl sm:text-2xl font-bold text-white border-l-4 border-white pl-3 sm:pl-4 mb-6">Registro de Personal</h2>
-            <form id="formRegistro" class="space-y-4 sm:space-y-5" autocomplete="off">
+        <div class="bg-black/70 backdrop-blur-md border border-white/10 rounded-xl p-4 sm:p-6 md:p-8 mb-12 max-w-2xl mx-auto shadow-2xl">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-white flex-1 text-center">Registro de Personal</h2>
+                <div id="modoEdicionMiembro" class="hidden bg-amber-500/20 border border-amber-400/30 px-3 py-1 rounded-full text-xs font-semibold text-amber-300">EDITANDO</div>
+            </div>
+
+            <form id="formRegistro" class="space-y-6" autocomplete="off">
                 <input type="hidden" id="miembroId">
 
-                <div class="border-b border-white/20 pb-4 mb-2">
-                    <h3 class="text-base sm:text-lg font-semibold text-white mb-3">Datos Personales</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                <div class="border-b border-white/20 pb-4">
+                    <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <span class="w-6 h-6 bg-blue-500/30 rounded-full flex items-center justify-center text-xs">1</span>
+                        Datos personales
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="campo-container">
-                            <label class="block text-gray-300 text-xs sm:text-sm font-medium mb-1">Nombre(s)</label>
-                            <input type="text" id="nombre" class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
+                            <label class="block text-gray-300 text-sm font-medium mb-2">Nombre(s):</label>
+                            <input type="text" id="nombre" class="w-full bg-black border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:border-blue-500 focus:outline-none transition placeholder-gray-500">
                             <div class="error-placeholder"></div>
                         </div>
                         <div class="campo-container">
-                            <label class="block text-gray-300 text-xs sm:text-sm font-medium mb-1">Apellido(s)</label>
-                            <input type="text" id="apellidos" class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
+                            <label class="block text-gray-300 text-sm font-medium mb-2">Apellido(s):</label>
+                            <input type="text" id="apellidos" class="w-full bg-black border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:border-blue-500 focus:outline-none transition placeholder-gray-500">
+                            <div class="error-placeholder"></div>
+                        </div>
+                        <div class="campo-container md:col-span-2">
+                            <label class="block text-gray-300 text-sm font-medium mb-2">Correo electrónico personal:</label>
+                            <input type="email" id="correo" class="w-full bg-black border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:border-blue-500 focus:outline-none transition placeholder-gray-500">
                             <div class="error-placeholder"></div>
                         </div>
                         <div class="campo-container">
-                            <label class="block text-gray-300 text-xs sm:text-sm font-medium mb-1">Correo Electrónico (Personal)</label>
-                            <input type="email" id="correo" class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
+                            <label class="block text-gray-300 text-sm font-medium mb-2">Teléfono móvil:</label>
+                            <input type="tel" id="telefono" pattern="\d{10}" maxlength="10" placeholder="10 dígitos" class="w-full bg-black border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:border-blue-500 focus:outline-none transition placeholder-gray-500">
                             <div class="error-placeholder"></div>
                         </div>
                         <div class="campo-container">
-                            <label class="block text-gray-300 text-xs sm:text-sm font-medium mb-1">Teléfono Móvil (10 dígitos)</label>
-                            <input type="tel" id="telefono" pattern="\d{10}" maxlength="10" class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
+                            <label class="block text-gray-300 text-sm font-medium mb-2">Fecha de nacimiento:</label>
+                            <input type="text" id="fechaNacimiento" placeholder="dd/mm/aaaa" class="w-full bg-black border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:border-blue-500 focus:outline-none transition placeholder-gray-500">
                             <div class="error-placeholder"></div>
                         </div>
-                        <div class="campo-container">
-                            <label class="block text-gray-300 text-xs sm:text-sm font-medium mb-1">Fecha de Nacimiento</label>
-                            <input type="text" id="fechaNacimiento" placeholder="dd/mm/aaaa" class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
-                            <div class="error-placeholder"></div>
-                        </div>
-                        <div class="campo-container">
-                            <label class="block text-gray-300 text-xs sm:text-sm font-medium mb-1">Género</label>
-                            <select id="genero" class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
-                                <option value="">Seleccionar</option>
+                        <div class="campo-container md:col-span-2">
+                            <label class="block text-gray-300 text-sm font-medium mb-2">Género:</label>
+                            <select id="genero" class="w-full bg-black border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:border-blue-500 focus:outline-none transition">
+                                <option value="">Seleccionar género...</option>
                                 <option value="Masculino">Masculino</option>
                                 <option value="Femenino">Femenino</option>
                                 <option value="Otro">Otro</option>
                             </select>
                             <div class="error-placeholder"></div>
                         </div>
-                        <div class="campo-container">
-                            <label class="block text-gray-300 text-xs sm:text-sm font-medium mb-1">Institución Educativa</label>
-                            <input type="text" id="institucion" class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
+                    </div>
+                </div>
+
+                <div class="border-b border-white/20 pb-4">
+                    <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <span class="w-6 h-6 bg-blue-500/30 rounded-full flex items-center justify-center text-xs">2</span>
+                        Información académica
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="campo-container md:col-span-2">
+                            <label class="block text-gray-300 text-sm font-medium mb-2">Institución educativa:</label>
+                            <input type="text" id="institucion" class="w-full bg-black border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:border-blue-500 focus:outline-none transition placeholder-gray-500">
                             <div class="error-placeholder"></div>
                         </div>
                         <div class="campo-container">
-                            <label class="block text-gray-300 text-xs sm:text-sm font-medium mb-1">Número de Control (8 o 9 dígitos)</label>
-                            <input type="text" id="numeroControl" pattern="\d{8,9}" maxlength="9" class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
+                            <label class="block text-gray-300 text-sm font-medium mb-2">Número de control:</label>
+                            <input type="text" id="numeroControl" pattern="\d{8,9}" maxlength="9" placeholder="8 o 9 dígitos" class="w-full bg-black border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:border-blue-500 focus:outline-none transition placeholder-gray-500">
                             <div class="error-placeholder"></div>
                         </div>
                         <div class="campo-container">
-                            <label class="block text-gray-300 text-xs sm:text-sm font-medium mb-1">Carrera</label>
-                            <select id="carrera" class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
+                            <label class="block text-gray-300 text-sm font-medium mb-2">Año de ingreso:</label>
+                            <input type="number" id="anioIngreso" min="2000" max="2030" class="w-full bg-black border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:border-blue-500 focus:outline-none transition placeholder-gray-500">
+                            <div class="error-placeholder"></div>
+                        </div>
+                        <div class="campo-container md:col-span-2">
+                            <label class="block text-gray-300 text-sm font-medium mb-2">Carrera:</label>
+                            <select id="carrera" class="w-full bg-black border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:border-blue-500 focus:outline-none transition">
                                 <option value="">Seleccionar carrera...</option>
                                 <option value="Ingeniería en Sistemas Computacionales">Ingeniería en Sistemas Computacionales</option>
                                 <option value="Ingeniería Civil">Ingeniería Civil</option>
@@ -430,9 +483,9 @@
                             <div class="error-placeholder"></div>
                         </div>
                         <div class="campo-container">
-                            <label class="block text-gray-300 text-xs sm:text-sm font-medium mb-1">Semestre</label>
-                            <select id="semestre" class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
-                                <option value="">Seleccionar semestre</option>
+                            <label class="block text-gray-300 text-sm font-medium mb-2">Semestre:</label>
+                            <select id="semestre" class="w-full bg-black border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:border-blue-500 focus:outline-none transition">
+                                <option value="">Seleccionar semestre...</option>
                                 <option value="1">1</option><option value="2">2</option><option value="3">3</option>
                                 <option value="4">4</option><option value="5">5</option><option value="6">6</option>
                                 <option value="7">7</option><option value="8">8</option><option value="9">9</option>
@@ -441,13 +494,8 @@
                             <div class="error-placeholder"></div>
                         </div>
                         <div class="campo-container">
-                            <label class="block text-gray-300 text-xs sm:text-sm font-medium mb-1">Año de Ingreso</label>
-                            <input type="number" id="anioIngreso" min="2000" max="2030" class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
-                            <div class="error-placeholder"></div>
-                        </div>
-                        <div class="campo-container">
-                            <label class="block text-gray-300 text-xs sm:text-sm font-medium mb-1">Rol en el equipo</label>
-                            <select id="rol" class="w-full bg-black border border-gray-700 text-white rounded-md px-3 sm:px-4 py-2 text-sm">
+                            <label class="block text-gray-300 text-sm font-medium mb-2">Rol en el equipo:</label>
+                            <select id="rol" class="w-full bg-black border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:border-blue-500 focus:outline-none transition">
                                 <option value="">Seleccionar rol...</option>
                                 <option value="Administrador">ADMINISTRADOR</option>
                                 <option value="Desarrollador">DESARROLLADOR</option>
@@ -458,12 +506,17 @@
                     </div>
                 </div>
 
-                <button type="submit" id="btnSubmit" class="w-full bg-white text-black font-bold py-2 rounded-md border border-white hover:bg-transparent hover:text-white transition-all duration-300 tracking-wide">Registrar en Polaris</button>
+                <div class="flex gap-3 pt-4">
+                    <button type="submit" id="btnSubmit" class="flex-1 bg-white text-black font-bold py-2.5 rounded-lg border border-white hover:bg-transparent hover:text-white transition-all duration-300 tracking-wide">Registrar en Polaris</button>
+                </div>
             </form>
         </div>
 
         <div class="mb-16">
-            <h2 class="text-2xl font-bold text-center mb-6">Personal Registrado</h2>
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-white text-center">Personal Registrado</h2>
+                <p class="text-gray-400 text-sm mt-2 text-center">Visualización completa de integrantes registrados en el sistema</p>
+            </div>
             <div id="listaMiembros" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
         </div>
     </div>
